@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 
 namespace api.core.trans.Models
 {
@@ -51,12 +53,17 @@ namespace api.core.trans.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=DESKTOP-IBN05PO;Database=FBS_SacPelileo;user id=sa;password=123456;Trusted_Connection=True;");
-            }
-        }
+			if (!optionsBuilder.IsConfigured)
+			{
+				var builder = new ConfigurationBuilder()
+			.SetBasePath(Directory.GetCurrentDirectory())
+			.AddJsonFile("appsettings.json");
+
+				var connectionStringConfig = builder.Build();
+				
+				optionsBuilder.UseSqlServer(connectionStringConfig.GetConnectionString("DefaultConnection"));
+			}
+		}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
