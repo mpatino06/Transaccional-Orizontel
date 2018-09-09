@@ -11,11 +11,11 @@ using api.core.trans.Utility;
 
 namespace api.core.trans.Services
 { 
-	public class CienteServices : ICliente
+	public class ClienteServices : ICliente
 	{
 		private FBS_SacPelileoContext context;
 
-		public CienteServices()
+		public ClienteServices()
 		{
 			context = new FBS_SacPelileoContext();
 		}

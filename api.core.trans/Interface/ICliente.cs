@@ -10,5 +10,6 @@ namespace api.core.trans.Interface
 	public interface ICliente
 	{
 		Cliente GetCliente(int code, int seleccion);
+		ClienteExtend GetClienteBySecEmpresaYNumeroCliente(int secEmpresa, int numCliente);
 	}
 }
