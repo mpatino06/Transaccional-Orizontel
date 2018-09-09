@@ -1,0 +1,11 @@
+E:\REPOSITORIOS\Transaccional-Orizontel\Api.core.Coop\bin\Debug\netcoreapp2.0\Api.core.Coop.deps.json
+E:\REPOSITORIOS\Transaccional-Orizontel\Api.core.Coop\bin\Debug\netcoreapp2.0\Api.core.Coop.runtimeconfig.json
+E:\REPOSITORIOS\Transaccional-Orizontel\Api.core.Coop\bin\Debug\netcoreapp2.0\Api.core.Coop.runtimeconfig.dev.json
+E:\REPOSITORIOS\Transaccional-Orizontel\Api.core.Coop\bin\Debug\netcoreapp2.0\Api.core.Coop.dll
+E:\REPOSITORIOS\Transaccional-Orizontel\Api.core.Coop\bin\Debug\netcoreapp2.0\Api.core.Coop.pdb
+E:\REPOSITORIOS\Transaccional-Orizontel\Api.core.Coop\obj\Debug\netcoreapp2.0\Api.core.Coop.csproj.CoreCompileInputs.cache
+E:\REPOSITORIOS\Transaccional-Orizontel\Api.core.Coop\obj\Debug\netcoreapp2.0\Api.core.Coop.AssemblyInfoInputs.cache
+E:\REPOSITORIOS\Transaccional-Orizontel\Api.core.Coop\obj\Debug\netcoreapp2.0\Api.core.Coop.AssemblyInfo.cs
+E:\REPOSITORIOS\Transaccional-Orizontel\Api.core.Coop\obj\Debug\netcoreapp2.0\Api.core.Coop.dll
+E:\REPOSITORIOS\Transaccional-Orizontel\Api.core.Coop\obj\Debug\netcoreapp2.0\Api.core.Coop.pdb
+E:\REPOSITORIOS\Transaccional-Orizontel\Api.core.Coop\obj\Debug\netcoreapp2.0\Api.core.Coop.csprojAssemblyReference.cache
