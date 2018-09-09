@@ -13375,11 +13375,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\REPOSITORIOS\\api.core.trans\\api.core.trans\\api.core.trans.csproj",
+      "projectUniqueName": "E:\\REPOSITORIOS\\Transaccional-Orizontel\\api.core.trans\\api.core.trans.csproj",
       "projectName": "api.core.trans",
-      "projectPath": "E:\\REPOSITORIOS\\api.core.trans\\api.core.trans\\api.core.trans.csproj",
+      "projectPath": "E:\\REPOSITORIOS\\Transaccional-Orizontel\\api.core.trans\\api.core.trans.csproj",
       "packagesPath": "C:\\Users\\Miguel\\.nuget\\packages\\",
-      "outputPath": "E:\\REPOSITORIOS\\api.core.trans\\api.core.trans\\obj\\",
+      "outputPath": "E:\\REPOSITORIOS\\Transaccional-Orizontel\\api.core.trans\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
