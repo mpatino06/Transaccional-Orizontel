@@ -122,7 +122,109 @@ namespace api.core.trans.Services
 			}
 			return clienteExtend;
 		}
+
+		public List<Comentariocliente> GetComentarioCliente(int cliente, bool activo)
+		{
+			List<Comentariocliente> comentarioclientes = new List<Comentariocliente>();
+			try
+			{
+				comentarioclientes = context.Comentariocliente.Where(a => a.Secuencialcliente == cliente && a.Estaactivo == activo).ToList();
+			}
+			catch (Exception)
+			{
+				comentarioclientes = null;
+				throw;
+			}
+			return comentarioclientes;
+		}
+
+		public List<ClienteCuentas> GetCuentasCliente(int cliente, int transaccion)
+		{
+			List<ClienteCuentas> clienteCuentas = new List<ClienteCuentas>(); 
+			try
+			{
+				string qry = string.Empty;
+
+				qry = "SELECT CUENTAMAESTRO.SECUENCIAL, ";
+				qry += "CUENTAMAESTRO.CODIGO, ";
+				qry += "TIPOCUENTA.NOMBRE, ";
+				qry += "CUENTAMAESTRO.CODIGOTIPOCUENTA, ";
+				qry += "CUENTAMAESTRO.CODIGOPRODUCTOVISTA, ";
+				qry += "PRODUCTO.NOMBRE, ";
+				qry += "CUENTAMAESTRO.CODIGOESTADO, ";
+				qry += "ESTADOCUENTA.NOMBRE, ";
+				qry += "CUENTAMAESTRO.SECUENCIALMONEDA, ";
+				qry += "CUENTAMAESTRO.SECUENCIALOFICINA,";
+				qry += "DIVISION.NOMBRE, ";
+				qry += "CUENTAMAESTRO.CODIGOUSUARIOOFICIAL, ";
+				qry += "CUENTAMAESTRO.FECHASISTEMACREACION, ";
+				qry += "CUENTAMAESTRO.FECHAMAQUINACREACION, ";
+				qry += "CUENTAMAESTRO.NUMEROLIBRETA, ";
+				qry += "CUENTAMAESTRO.NUMEROLINEAIMPRIMELIBRETA, ";
+				qry += "CUENTAMAESTRO.ESANVERSO, ";
+				qry += "CUENTAMAESTRO.TIENESEGUROACTIVO, ";
+				qry += "CUENTAMAESTRO.FECHACORTE, ";
+				qry += "CUENTAMAESTRO.BLOQUEADATRANSACCIONOPERATIVA, ";
+				qry += "CUENTAMAESTRO.NUMEROVERIFICADOR ";
+				qry += "FROM  FBS_CAPTACIONESVISTA.CUENTAMAESTRO , FBS_CAPTACIONESVISTA.CUENTACLIENTE , FBS_CAPTACIONESVISTA.TIPOCUENTA, FBS_CAPTACIONESVISTA.ESTADOCUENTA, FBS_NEGOCIOSFINANCIEROS.PRODUCTO, FBS_GENERALES.DIVISION ";
+				qry += "WHERE CUENTACLIENTE.SECUENCIALCUENTA = CUENTAMAESTRO.SECUENCIAL AND ";
+				qry += "CUENTACLIENTE.SECUENCIALCLIENTE ='" + cliente + "' AND ";
+				qry += "CUENTACLIENTE.ESTAACTIVO = 1 AND ";
+				qry += "TIPOCUENTA.CODIGO = CUENTAMAESTRO.CODIGOTIPOCUENTA AND ";
+				qry += "CUENTAMAESTRO.BLOQUEADATRANSACCIONOPERATIVA = 0  AND ";
+				qry += "CUENTAMAESTRO.CODIGOESTADO NOT IN('P', 'B', 'I', 'C') AND ";
+				qry += "CUENTAMAESTRO.SECUENCIAL IN(SELECT CUENTACOMPONENTE_VISTA.SECUENCIALCUENTA FROM FBS_CAPTACIONESVISTA.CUENTACOMPONENTE_VISTA WHERE CUENTACOMPONENTE_VISTA.SECUENCIALCUENTA = CUENTAMAESTRO.SECUENCIAL AND CUENTACOMPONENTE_VISTA.SECUENCIALCOMPONENTEVISTA IN (SELECT TRANSACCIONCOMPONENTE.SECUENCIALCOMPONENTE ";
+				qry += "FROM FBS_NEGOCIOSFINANCIEROS.TRANSACCIONCOMPONENTE ";
+				qry += "WHERE TRANSACCIONCOMPONENTE.ESTAACTIVA = 1 AND ";
+				qry += "TRANSACCIONCOMPONENTE.SECUENCIALTRANSACCION ='" + transaccion + "')) AND ";
+				qry += "CUENTAMAESTRO.CODIGOESTADO = ESTADOCUENTA.CODIGO AND ";
+				qry += "CUENTAMAESTRO.CODIGOPRODUCTOVISTA = PRODUCTO.CODIGO AND ";
+				qry += " CUENTAMAESTRO.SECUENCIALOFICINA = DIVISION.SECUENCIAL ";
+				qry += "ORDER BY TIPOCUENTA.NOMBRE";
+
+				using (SqlConnection conn = new SqlConnection(SQLHelper.ConnectionString))
+				{
+					SqlDataReader dr = SQLHelper.ExecuteReader(conn, System.Data.CommandType.Text, qry, null);
+					if (dr.HasRows)
+					{
+						foreach (DbDataRecord c in dr.Cast<DbDataRecord>())
+						{
+
+							clienteCuentas.Add(new ClienteCuentas
+							{
+								Secuencial = c.GetInt32(0),
+								Codigo = c.GetString(1),
+								NombreCuenta = c.GetString(2),
+								CodigoTipoCuenta = c.GetInt32(3),
+								CodigoProductoVista = c.GetInt32(4),
+								NombreProducto = c.GetString(5),
+								CodigoEstado = c.GetString(6),
+								NombreEstado = c.GetString(7),
+								SecuencialMoneda = c.GetInt32(8),
+								SecuencialOficina = c.GetInt32(9),
+								NombreDivision = c.GetString(10),
+								CodigoUsuarioOficial = c.GetString(11),
+								FechaSistemaCreacion = c.GetDateTime(12),
+								FechaMaquinaCreacion = c.GetDateTime(13),
+								NumeroLibreta = c.GetInt32(14),
+								EsAnverso = c.GetBoolean(15),
+								TieneSeguroActivo = c.GetBoolean(16),
+								FechaCorte = c.GetDateTime(17),
+								BloqeadaTransaccionOperativa = c.GetBoolean(18),
+								NumeroVerificador = c.GetInt32(19)
+							});
+						}
+					}
+				}
+
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
+			return clienteCuentas;
+
+		}
 	}
-
-
 }
