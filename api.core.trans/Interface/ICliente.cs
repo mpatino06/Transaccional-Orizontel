@@ -12,5 +12,7 @@ namespace api.core.trans.Interface
 		Cliente GetCliente(int code, int seleccion);
 		ClienteExtend GetClienteBySecEmpresaYNumeroCliente(int secEmpresa, int numCliente);
 		List<Comentariocliente> GetComentarioCliente(int cliente, bool activo);
+		List<ClienteCuentas> GetCuentasCliente(int cliente, int transaccion);
+		CuentacomponenteVista GetSaldoCuenta(int cuenta, int componente);
 	}
 }

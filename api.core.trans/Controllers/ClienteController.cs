@@ -42,14 +42,23 @@ namespace api.core.trans.Controllers
 		}
 
 		[HttpGet("GetComentario/{cliente}/{activo}")]
-		public async Task<IActionResult> GetComentario([FromRoute] int code, bool activo)
+		public async Task<IActionResult> GetComentario([FromRoute] int cliente, bool activo)
 		{
-			var result = await Task.Run(() => context.GetComentarioCliente(code, activo));
+			var result = await Task.Run(() => context.GetComentarioCliente(cliente, activo));
 			if (result == null)
 				return NotFound("Cliente not Found");
 
 			return Ok(result);
 		}
 
+		[HttpGet("GetCuentas/{cliente}/{transaccion}")]
+		public async Task<IActionResult> GetCuentas([FromRoute] int cliente, int transaccion)
+		{
+			var result = await Task.Run(() => context.GetCuentasCliente(cliente, transaccion));
+			if (result == null)
+				return NotFound("Cliente not Found");
+
+			return Ok(result);
+		}
 	}
 }

@@ -226,5 +226,21 @@ namespace api.core.trans.Services
 			return clienteCuentas;
 
 		}
+
+		public CuentacomponenteVista GetSaldoCuenta(int cuenta, int componente)
+		{
+			try
+			{
+				return context.CuentacomponenteVista.FirstOrDefault(a=> a.Secuencial == cuenta && a.Secuencialcomponentevista == componente);
+			}
+			catch (Exception)
+			{
+				return null;
+				throw;
+			}
+
+		}
+
+
 	}
 }
