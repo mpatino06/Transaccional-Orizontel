@@ -42,5 +42,15 @@ namespace api.core.trans.Controllers
 			return Ok(result);
 		}
 
+		[HttpGet("GetTransaccionTipoMovimiento/{secuencial}")]
+		public async Task<IActionResult> GetTransaccionTipoMovimiento([FromRoute] int secuencial)
+		{
+			var result = await Task.Run(() => context.GetTransacciontipomovimientos(secuencial));
+			if (result == null)
+				return NotFound("Transaccion not Found");
+
+			return Ok(result);
+		}
+
 	}
 }

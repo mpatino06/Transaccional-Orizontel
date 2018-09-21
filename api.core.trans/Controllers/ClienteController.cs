@@ -32,9 +32,9 @@ namespace api.core.trans.Controllers
 		}
 
 		[HttpGet("GetBySecEmpresaYNumeroCliente/{empresa}/{cliente}")]
-		public async Task<IActionResult> GetBySecEmpresaYNumeroCliente([FromRoute] int code, int cliente)
+		public async Task<IActionResult> GetBySecEmpresaYNumeroCliente([FromRoute] int empresa, int cliente)
 		{
-			var result = await Task.Run(() => context.GetClienteBySecEmpresaYNumeroCliente(code, cliente));
+			var result = await Task.Run(() => context.GetClienteBySecEmpresaYNumeroCliente(empresa, cliente));
 			if (result == null)
 				return NotFound("Cliente not Found");
 

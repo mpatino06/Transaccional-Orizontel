@@ -22,7 +22,7 @@ namespace api.core.trans.ExtendModels
 		public int NumeroVerificadorCliente { get; set; }
 		public string CodigoTipoIDentificacion { get; set; }
 		public string NombreTipoIdentificacion { get; set; }
-		public int Identificacion { get; set; }
+		public string Identificacion { get; set; }
 		public string NombreUnido { get; set; }
 		public string DireccionDomicilio { get; set; }
 		public string ReferenciaDomiciliaria { get; set; }

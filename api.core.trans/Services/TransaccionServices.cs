@@ -44,5 +44,17 @@ namespace api.core.trans.Services
 			}
 		}
 
+		public List<Transacciontipomovimiento> GetTransacciontipomovimientos(int secuencial)
+		{
+			try
+			{
+				return context.Transacciontipomovimiento.Where(a => a.SecuencialTransaccion == secuencial).ToList();
+			}
+			catch (Exception ex)
+			{
+				return null;
+				throw;
+			}
+		}
 	}
 }

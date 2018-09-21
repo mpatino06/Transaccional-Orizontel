@@ -50,8 +50,10 @@ namespace api.core.trans.Models
         public virtual DbSet<Ventanilla> Ventanilla { get; set; }
         public virtual DbSet<VentanillacomponenteCaja> VentanillacomponenteCaja { get; set; }
         public virtual DbSet<Ventanillacomponentedenomnefe> Ventanillacomponentedenomnefe { get; set; }
+		public virtual DbSet<Transacciontipomovimiento> Transacciontipomovimiento { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 			if (!optionsBuilder.IsConfigured)
 			{
@@ -1496,6 +1498,20 @@ namespace api.core.trans.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("VENTANILLACOMPONENTEDENOMN_R01");
             });
-        }
+
+			modelBuilder.Entity<Transacciontipomovimiento>(entity =>
+			{
+				entity.HasKey(e => e.Secuencial);
+
+				entity.ToTable("TRANSACCIONTIPOMOVIMIENTO", "FBS_NEGOCIOSFINANCIEROS");
+
+				entity.Property(e => e.SecuencialTransaccion).HasColumnName("SECUENCIALTRANSACCION");
+				entity.Property(e => e.Codigotipomovimiento).HasColumnName("CODIGOTIPOMOVIMIENTO");
+				entity.Property(e => e.Estaactivo).HasColumnName("ESTAACTIVO");
+				entity.Property(e => e.Numeroverificador).HasColumnName("NUMEROVERIFICADOR");
+
+			});
+
+		}
     }
 }

@@ -10,5 +10,6 @@ namespace api.core.trans.Interface
 	{
 		Transaccion GetBySecuencial(int code);
 		List<Empresadenominacionfija> GetDenominacionMoneda(int empresa);
+		List<Transacciontipomovimiento> GetTransacciontipomovimientos(int secuencial);
 	}
 }

@@ -71,7 +71,7 @@ namespace api.core.trans.Services
 				qry += "P.SECUENCIALTIPOIDENTIFICACION, ";
 				qry += "P.SECUENCIALDIVPOLRESIDENCIA, ";
 				qry += "P.CODIGOPAISORIGEN, ";
-				qry += "NUMEROVERIFICADOR, ";
+				qry += "P.NUMEROVERIFICADOR, ";
 				qry += "P.SECUENCIALDIVACTIVIDADECON ";
 				qry += "FROM FBS_CLIENTES.CLIENTE AS C INNER JOIN ";
 				qry += "FBS_ORGANIZACIONES.OFICINA AS O ON C.SECUENCIALOFICINA = O.SECUENCIALDIVISION INNER JOIN ";
@@ -84,38 +84,37 @@ namespace api.core.trans.Services
 					SqlDataReader dr = SQLHelper.ExecuteReader(conn, System.Data.CommandType.Text, qry, null);
 					if (dr.HasRows)
 					{
-						foreach (DbDataRecord c in dr.Cast<DbDataRecord>())
+						while (dr.Read())
 						{
-							clienteExtend.SecuencialCliente = c.GetInt32(0);
-							clienteExtend.SecuencialOficina = c.GetInt32(1);
-							clienteExtend.SecuencialPersona = c.GetInt32(2);
-							clienteExtend.NumeroCliente = c.GetInt32(3);
-							clienteExtend.FechaIngreso = c.GetDateTime(4);
-							clienteExtend.CodigoUsuarioOficial = c.GetString(5);
-							clienteExtend.CodigoSectorEconomico = c.GetString(6);
-							clienteExtend.CodigoTipoVinculacion = c.GetString(7);
-							clienteExtend.CodigoCalificacionInterna = c.GetString(8);
-							clienteExtend.SecuencialDivisionMercado = c.GetInt32(9);
-							clienteExtend.CodigoEstadoCliente = c.GetString(10);
-							clienteExtend.NumeroVerificadorCliente = c.GetInt32(11);
-							clienteExtend.CodigoTipoIDentificacion = c.GetString(12);
-							clienteExtend.NombreTipoIdentificacion = c.GetString(13);
-							clienteExtend.Identificacion = c.GetInt32(14);
-							clienteExtend.NombreUnido = c.GetString(15);
-							clienteExtend.DireccionDomicilio = c.GetString(16);
-							clienteExtend.ReferenciaDomiciliaria = c.GetString(17);
-							clienteExtend.Email = c.GetString(18);
-							clienteExtend.SecuencialTipoIdentificacion = c.GetInt32(19);
-							clienteExtend.SecuencialDivPolResidencia = c.GetInt32(20);
-							clienteExtend.CodigoPaisOrigen = c.GetString(21);
-							clienteExtend.NumeroVerificador = c.GetInt32(22);
-							clienteExtend.SecuencialDivActEcon = c.GetInt32(23);
+							clienteExtend.SecuencialCliente = dr.GetInt32(0);
+							clienteExtend.SecuencialOficina = dr.GetInt32(1);
+							clienteExtend.SecuencialPersona = dr.GetInt32(2);
+							clienteExtend.NumeroCliente = dr.GetInt32(3);
+							clienteExtend.FechaIngreso = dr.GetDateTime(4);
+							clienteExtend.CodigoUsuarioOficial = dr.GetString(5);
+							clienteExtend.CodigoSectorEconomico = dr.GetString(6);
+							clienteExtend.CodigoTipoVinculacion = dr.GetString(7);
+							clienteExtend.CodigoCalificacionInterna = dr.GetString(8);
+							clienteExtend.SecuencialDivisionMercado = dr.GetInt32(9);
+							clienteExtend.CodigoEstadoCliente = dr.GetString(10);
+							clienteExtend.NumeroVerificadorCliente = dr.GetInt32(11);
+							clienteExtend.CodigoTipoIDentificacion = dr.GetString(12);
+							clienteExtend.NombreTipoIdentificacion = dr.GetString(13);
+							clienteExtend.Identificacion = dr.GetString(14);
+							clienteExtend.NombreUnido = dr.GetString(15);
+							clienteExtend.DireccionDomicilio = dr.GetString(16);
+							clienteExtend.ReferenciaDomiciliaria = dr.GetString(17);
+							clienteExtend.Email = dr.GetString(18);
+							clienteExtend.SecuencialTipoIdentificacion = dr.GetInt32(19);
+							clienteExtend.SecuencialDivPolResidencia = dr.GetInt32(20);
+							clienteExtend.CodigoPaisOrigen = dr.GetString(21);
+							clienteExtend.NumeroVerificador = dr.GetInt32(22);
+							clienteExtend.SecuencialDivActEcon = dr.GetInt32(23);
 						}
 					}
 				}
-
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				clienteExtend = null;
 				throw;
@@ -154,9 +153,11 @@ namespace api.core.trans.Services
 				qry += "CUENTAMAESTRO.CODIGOESTADO, ";
 				qry += "ESTADOCUENTA.NOMBRE, ";
 				qry += "CUENTAMAESTRO.SECUENCIALMONEDA, ";
+				qry += "MONEDA.NOMBRE AS NOMBREMONEDA, ";
 				qry += "CUENTAMAESTRO.SECUENCIALOFICINA,";
 				qry += "DIVISION.NOMBRE, ";
 				qry += "CUENTAMAESTRO.CODIGOUSUARIOOFICIAL, ";
+				qry += "USUARIO.NOMBRE AS NOMBREUSUARIO, ";
 				qry += "CUENTAMAESTRO.FECHASISTEMACREACION, ";
 				qry += "CUENTAMAESTRO.FECHAMAQUINACREACION, ";
 				qry += "CUENTAMAESTRO.NUMEROLIBRETA, ";
@@ -166,13 +167,15 @@ namespace api.core.trans.Services
 				qry += "CUENTAMAESTRO.FECHACORTE, ";
 				qry += "CUENTAMAESTRO.BLOQUEADATRANSACCIONOPERATIVA, ";
 				qry += "CUENTAMAESTRO.NUMEROVERIFICADOR ";
-				qry += "FROM  FBS_CAPTACIONESVISTA.CUENTAMAESTRO , FBS_CAPTACIONESVISTA.CUENTACLIENTE , FBS_CAPTACIONESVISTA.TIPOCUENTA, FBS_CAPTACIONESVISTA.ESTADOCUENTA, FBS_NEGOCIOSFINANCIEROS.PRODUCTO, FBS_GENERALES.DIVISION ";
+				qry += "FROM  FBS_CAPTACIONESVISTA.CUENTAMAESTRO , FBS_CAPTACIONESVISTA.CUENTACLIENTE , FBS_CAPTACIONESVISTA.TIPOCUENTA, FBS_CAPTACIONESVISTA.ESTADOCUENTA, FBS_NEGOCIOSFINANCIEROS.PRODUCTO, FBS_GENERALES.DIVISION, FBS_GENERALES.MONEDA, FBS_SEGURIDADES.USUARIO ";
 				qry += "WHERE CUENTACLIENTE.SECUENCIALCUENTA = CUENTAMAESTRO.SECUENCIAL AND ";
 				qry += "CUENTACLIENTE.SECUENCIALCLIENTE ='" + cliente + "' AND ";
 				qry += "CUENTACLIENTE.ESTAACTIVO = 1 AND ";
 				qry += "TIPOCUENTA.CODIGO = CUENTAMAESTRO.CODIGOTIPOCUENTA AND ";
 				qry += "CUENTAMAESTRO.BLOQUEADATRANSACCIONOPERATIVA = 0  AND ";
 				qry += "CUENTAMAESTRO.CODIGOESTADO NOT IN('P', 'B', 'I', 'C') AND ";
+				qry += "MONEDA.SECUENCIAL = CUENTAMAESTRO.SECUENCIALMONEDA AND ";
+				qry += "USUARIO.CODIGO = CUENTAMAESTRO.CODIGOUSUARIOOFICIAL AND ";
 				qry += "CUENTAMAESTRO.SECUENCIAL IN(SELECT CUENTACOMPONENTE_VISTA.SECUENCIALCUENTA FROM FBS_CAPTACIONESVISTA.CUENTACOMPONENTE_VISTA WHERE CUENTACOMPONENTE_VISTA.SECUENCIALCUENTA = CUENTAMAESTRO.SECUENCIAL AND CUENTACOMPONENTE_VISTA.SECUENCIALCOMPONENTEVISTA IN (SELECT TRANSACCIONCOMPONENTE.SECUENCIALCOMPONENTE ";
 				qry += "FROM FBS_NEGOCIOSFINANCIEROS.TRANSACCIONCOMPONENTE ";
 				qry += "WHERE TRANSACCIONCOMPONENTE.ESTAACTIVA = 1 AND ";
@@ -195,30 +198,33 @@ namespace api.core.trans.Services
 								Secuencial = c.GetInt32(0),
 								Codigo = c.GetString(1),
 								NombreCuenta = c.GetString(2),
-								CodigoTipoCuenta = c.GetInt32(3),
-								CodigoProductoVista = c.GetInt32(4),
+								CodigoTipoCuenta = c.GetString(3),
+								CodigoProductoVista = c.GetString(4),
 								NombreProducto = c.GetString(5),
 								CodigoEstado = c.GetString(6),
-								NombreEstado = c.GetString(7),
+								NombreEstado = c.GetString(7).Trim(),
 								SecuencialMoneda = c.GetInt32(8),
-								SecuencialOficina = c.GetInt32(9),
-								NombreDivision = c.GetString(10),
-								CodigoUsuarioOficial = c.GetString(11),
-								FechaSistemaCreacion = c.GetDateTime(12),
-								FechaMaquinaCreacion = c.GetDateTime(13),
-								NumeroLibreta = c.GetInt32(14),
-								EsAnverso = c.GetBoolean(15),
-								TieneSeguroActivo = c.GetBoolean(16),
-								FechaCorte = c.GetDateTime(17),
-								BloqeadaTransaccionOperativa = c.GetBoolean(18),
-								NumeroVerificador = c.GetInt32(19)
+								NombreMondea = c.GetString(9),
+								SecuencialOficina = c.GetInt32(10),
+								NombreDivision = c.GetString(11),
+								CodigoUsuarioOficial = c.GetString(12),
+								NombreUsuario = c.GetString(13),
+								FechaSistemaCreacion = c.GetDateTime(14),
+								FechaMaquinaCreacion = c.GetDateTime(15),
+								NumeroLibreta = c.GetInt32(16),
+								NumeroLineaImprimeLibreta = c.GetInt32(17),
+								EsAnverso = c.GetBoolean(18),
+								TieneSeguroActivo = c.GetBoolean(19),
+								FechaCorte = c.GetDateTime(20),
+								BloqeadaTransaccionOperativa = c.GetBoolean(21),
+								NumeroVerificador = c.GetInt32(22)
 							});
 						}
 					}
 				}
 
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 
 				throw;
