@@ -18,6 +18,7 @@ namespace api.core.trans.ExtendModels
 		public int SecuencialMoneda { get; set; }
 		public string NombreMondea { get; set; }
 		public int SecuencialOficina { get; set; }
+		public int SecuencialEmpresa { get; set; }
 		public string NombreDivision { get; set; }
 		public string CodigoUsuarioOficial { get; set; }
 		public string NombreUsuario { get; set; }

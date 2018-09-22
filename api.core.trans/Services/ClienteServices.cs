@@ -155,6 +155,7 @@ namespace api.core.trans.Services
 				qry += "CUENTAMAESTRO.SECUENCIALMONEDA, ";
 				qry += "MONEDA.NOMBRE AS NOMBREMONEDA, ";
 				qry += "CUENTAMAESTRO.SECUENCIALOFICINA,";
+				qry += "OFICINA.SECUENCIALEMPRESA, ";
 				qry += "DIVISION.NOMBRE, ";
 				qry += "CUENTAMAESTRO.CODIGOUSUARIOOFICIAL, ";
 				qry += "USUARIO.NOMBRE AS NOMBREUSUARIO, ";
@@ -167,7 +168,7 @@ namespace api.core.trans.Services
 				qry += "CUENTAMAESTRO.FECHACORTE, ";
 				qry += "CUENTAMAESTRO.BLOQUEADATRANSACCIONOPERATIVA, ";
 				qry += "CUENTAMAESTRO.NUMEROVERIFICADOR ";
-				qry += "FROM  FBS_CAPTACIONESVISTA.CUENTAMAESTRO , FBS_CAPTACIONESVISTA.CUENTACLIENTE , FBS_CAPTACIONESVISTA.TIPOCUENTA, FBS_CAPTACIONESVISTA.ESTADOCUENTA, FBS_NEGOCIOSFINANCIEROS.PRODUCTO, FBS_GENERALES.DIVISION, FBS_GENERALES.MONEDA, FBS_SEGURIDADES.USUARIO ";
+				qry += "FROM  FBS_CAPTACIONESVISTA.CUENTAMAESTRO , FBS_CAPTACIONESVISTA.CUENTACLIENTE , FBS_CAPTACIONESVISTA.TIPOCUENTA, FBS_CAPTACIONESVISTA.ESTADOCUENTA, FBS_NEGOCIOSFINANCIEROS.PRODUCTO, FBS_GENERALES.DIVISION, FBS_GENERALES.MONEDA, FBS_SEGURIDADES.USUARIO, FBS_ORGANIZACIONES.OFICINA ";
 				qry += "WHERE CUENTACLIENTE.SECUENCIALCUENTA = CUENTAMAESTRO.SECUENCIAL AND ";
 				qry += "CUENTACLIENTE.SECUENCIALCLIENTE ='" + cliente + "' AND ";
 				qry += "CUENTACLIENTE.ESTAACTIVO = 1 AND ";
@@ -176,6 +177,7 @@ namespace api.core.trans.Services
 				qry += "CUENTAMAESTRO.CODIGOESTADO NOT IN('P', 'B', 'I', 'C') AND ";
 				qry += "MONEDA.SECUENCIAL = CUENTAMAESTRO.SECUENCIALMONEDA AND ";
 				qry += "USUARIO.CODIGO = CUENTAMAESTRO.CODIGOUSUARIOOFICIAL AND ";
+				qry += "CUENTAMAESTRO.SECUENCIALOFICINA = OFICINA.SECUENCIALDIVISION AND ";
 				qry += "CUENTAMAESTRO.SECUENCIAL IN(SELECT CUENTACOMPONENTE_VISTA.SECUENCIALCUENTA FROM FBS_CAPTACIONESVISTA.CUENTACOMPONENTE_VISTA WHERE CUENTACOMPONENTE_VISTA.SECUENCIALCUENTA = CUENTAMAESTRO.SECUENCIAL AND CUENTACOMPONENTE_VISTA.SECUENCIALCOMPONENTEVISTA IN (SELECT TRANSACCIONCOMPONENTE.SECUENCIALCOMPONENTE ";
 				qry += "FROM FBS_NEGOCIOSFINANCIEROS.TRANSACCIONCOMPONENTE ";
 				qry += "WHERE TRANSACCIONCOMPONENTE.ESTAACTIVA = 1 AND ";
@@ -206,18 +208,19 @@ namespace api.core.trans.Services
 								SecuencialMoneda = c.GetInt32(8),
 								NombreMondea = c.GetString(9),
 								SecuencialOficina = c.GetInt32(10),
-								NombreDivision = c.GetString(11),
-								CodigoUsuarioOficial = c.GetString(12),
-								NombreUsuario = c.GetString(13),
-								FechaSistemaCreacion = c.GetDateTime(14),
-								FechaMaquinaCreacion = c.GetDateTime(15),
-								NumeroLibreta = c.GetInt32(16),
-								NumeroLineaImprimeLibreta = c.GetInt32(17),
-								EsAnverso = c.GetBoolean(18),
-								TieneSeguroActivo = c.GetBoolean(19),
-								FechaCorte = c.GetDateTime(20),
-								BloqeadaTransaccionOperativa = c.GetBoolean(21),
-								NumeroVerificador = c.GetInt32(22)
+								SecuencialEmpresa = c.GetInt32(11),
+								NombreDivision = c.GetString(12),
+								CodigoUsuarioOficial = c.GetString(13),
+								NombreUsuario = c.GetString(14),
+								FechaSistemaCreacion = c.GetDateTime(15),
+								FechaMaquinaCreacion = c.GetDateTime(16),
+								NumeroLibreta = c.GetInt32(17),
+								NumeroLineaImprimeLibreta = c.GetInt32(18),
+								EsAnverso = c.GetBoolean(19),
+								TieneSeguroActivo = c.GetBoolean(20),
+								FechaCorte = c.GetDateTime(21),
+								BloqeadaTransaccionOperativa = c.GetBoolean(22),
+								NumeroVerificador = c.GetInt32(23)
 							});
 						}
 					}

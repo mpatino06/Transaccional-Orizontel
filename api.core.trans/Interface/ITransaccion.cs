@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.core.trans.ExtendModels;
 using api.core.trans.Models;
 
 namespace api.core.trans.Interface
@@ -11,5 +12,6 @@ namespace api.core.trans.Interface
 		Transaccion GetBySecuencial(int code);
 		List<Empresadenominacionfija> GetDenominacionMoneda(int empresa);
 		List<Transacciontipomovimiento> GetTransacciontipomovimientos(int secuencial);
+		TransaccionMoneda GetTransaccionMonedas(int empresa, int secuencial);
 	}
 }

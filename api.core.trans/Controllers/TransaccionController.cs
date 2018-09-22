@@ -52,5 +52,14 @@ namespace api.core.trans.Controllers
 			return Ok(result);
 		}
 
+		[HttpGet("GetTransaccionMoneda/{secuencial}/{empresa}")]
+		public async Task<IActionResult> GetTransaccionMoneda([FromRoute] int secuencial, int empresa)
+		{
+			var result = await Task.Run(() => context.GetTransaccionMonedas(empresa, secuencial));
+			if (result == null)
+				return NotFound("Transaccion not Found");
+
+			return Ok(result);
+		}
 	}
 }

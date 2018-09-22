@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.core.trans.ExtendModels;
 using api.core.trans.Interface;
 using api.core.trans.Models;
 
@@ -55,6 +56,22 @@ namespace api.core.trans.Services
 				return null;
 				throw;
 			}
+		}
+
+		public TransaccionMoneda GetTransaccionMonedas(int empresa, int secuencial)
+		{
+			var list = new TransaccionMoneda();
+			try
+			{
+				list.DenominacionMoneda = GetDenominacionMoneda(empresa);
+				list.TipoMovimiento = GetTransacciontipomovimientos(secuencial);
+			}
+			catch (Exception)
+			{
+				list = null;
+				throw;
+			}
+			return list;
 		}
 	}
 }
