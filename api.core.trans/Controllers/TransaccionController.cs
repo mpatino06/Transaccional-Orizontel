@@ -25,7 +25,7 @@ namespace api.core.trans.Controllers
 		[HttpGet("GetTransaccion/{code}")]
 		public async Task<IActionResult> GetTransaccion([FromRoute] int code)
 		{
-			var result = await Task.Run(() => context.GetBySecuencial(code));
+			var result = await Task.Run(() => context.GetBySecuencialEmpresa(code));
 			if (result == null)
 				return NotFound("Transaccion not Found");
 

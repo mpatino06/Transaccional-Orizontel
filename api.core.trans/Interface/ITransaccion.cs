@@ -9,7 +9,7 @@ namespace api.core.trans.Interface
 {
 	public interface ITransaccion
 	{
-		Transaccion GetBySecuencial(int code);
+		List<Transaccion> GetBySecuencialEmpresa(int Secuencialempresa);
 		List<Empresadenominacionfija> GetDenominacionMoneda(int empresa);
 		List<Transacciontipomovimiento> GetTransacciontipomovimientos(int secuencial);
 		TransaccionMoneda GetTransaccionMonedas(int empresa, int secuencial);

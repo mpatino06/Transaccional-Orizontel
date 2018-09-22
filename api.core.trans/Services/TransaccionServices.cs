@@ -19,11 +19,13 @@ namespace api.core.trans.Services
 			context = new FBS_SacPelileoContext();
 		}
 
-		public Transaccion GetBySecuencial(int code)
+		public List<Transaccion> GetBySecuencialEmpresa(int Secuencialempresa)
 		{
 			try
 			{
-				return context.Transaccion.FirstOrDefault(a => a.Secuencial == code);
+				int[] secuencial = { 18, 19 };
+
+				return context.Transaccion.Where(a => a.Secuencialempresa == Secuencialempresa && secuencial.Contains(a.Secuencial)).ToList();
 			}
 			catch (Exception)
 			{
