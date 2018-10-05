@@ -51,7 +51,11 @@ namespace api.core.trans.Models
         public virtual DbSet<VentanillacomponenteCaja> VentanillacomponenteCaja { get; set; }
         public virtual DbSet<Ventanillacomponentedenomnefe> Ventanillacomponentedenomnefe { get; set; }
 		public virtual DbSet<Transacciontipomovimiento> Transacciontipomovimiento { get; set; }
-
+		public virtual DbSet<Registrocontable> Registrocontable { get; set; }
+		public virtual DbSet<ComponenteCuentaContable> ComponenteCuentaContable { get; set; }
+		public virtual DbSet<Banco> Banco { get; set; }
+		public virtual DbSet<Cheque> Cheque { get; set; }
+		public virtual DbSet<ChequeMovimientoDetalle> ChequeMovimientoDetalle { get; set; }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1512,6 +1516,84 @@ namespace api.core.trans.Models
 
 			});
 
+			modelBuilder.Entity<Registrocontable>(entity =>
+			{
+				entity.HasKey(e => e.Secuencial);
+
+				entity.ToTable("REGISTROCONTABLE", "FBS_REPOSITORIOCONTABLE");
+
+				entity.Property(e => e.Valor).HasColumnName("VALOR");
+				entity.Property(e => e.Esdebito).HasColumnName("ESDEBITO");
+				entity.Property(e => e.Documento).HasColumnName("DOCUMENTO");
+				entity.Property(e => e.Detalle).HasColumnName("DETALLE");
+				entity.Property(e => e.Estacontabilizado).HasColumnName("ESTACONTABILIZADO");
+				entity.Property(e => e.Secuencialcuentacontable).HasColumnName("SECUENCIALCUENTACONTABLE");
+				entity.Property(e => e.Secuencialoficina).HasColumnName("SECUENCIALOFICINA");
+				entity.Property(e => e.Secuencialperfilcontable).HasColumnName("SECUENCIALPERFILCONTABLE");
+				entity.Property(e => e.Codigousuario).HasColumnName("CODIGOUSUARIO");
+				entity.Property(e => e.Secuencialmoneda).HasColumnName("SECUENCIALMONEDA");
+				entity.Property(e => e.Fechasistemaregistro).HasColumnName("FECHASISTEMAREGISTRO");
+				entity.Property(e => e.Fechamaquinaregistro).HasColumnName("FECHAMAQUINAREGISTRO");
+				entity.Property(e => e.Secuencialmovimientodetalle).HasColumnName("SECUENCIALMOVIMIENTODETALLE");
+				entity.Property(e => e.Secuencialmovimientocontrol).HasColumnName("SECUENCIALMOVIMIENTOCONTROL");
+				entity.Property(e => e.Estaactiva).HasColumnName("ESTAACTIVA");
+				entity.Property(e => e.Generarcheque).HasColumnName("GENERARCHEQUE");
+				entity.Property(e => e.Esreverso).HasColumnName("ESREVERSO");
+				entity.Property(e => e.Numeroverificador).HasColumnName("NUMEROVERIFICADOR");
+			});
+
+			modelBuilder.Entity<ComponenteCuentaContable>(entity =>
+			{
+				entity.HasKey(e => e.Secuencialcomponente);
+				entity.ToTable("COMPONENTE_CUENTACONTABLE", "FBS_NEGOCIOSFINANCIEROS");
+
+				entity.Property(e => e.SecuencialCuentaContable).HasColumnName("SECUENCIALCUENTACONTABLE");
+				entity.Property(e => e.EstaActivo).HasColumnName("ESTAACTIVO");
+				entity.Property(e => e.NumeroVerificador).HasColumnName("NUMEROVERIFICADOR");
+			});
+
+			modelBuilder.Entity<Banco>(entity =>
+			{
+				entity.HasKey(e => e.Secuencial);
+				entity.ToTable("BANCO", "FBS_GENERALES");
+
+				entity.Property(e => e.Codigo).HasColumnName("CODIGO");
+				entity.Property(e => e.Nombre).HasColumnName("NOMBRE");
+				entity.Property(e => e.CodigoTipoBanco).HasColumnName("CODIGOTIPOBANCO");
+				entity.Property(e => e.Estaactivo).HasColumnName("ESTAACTIVO");
+				entity.Property(e => e.NumeroVerificador).HasColumnName("NUMEROVERIFICADOR");
+
+			});
+
+			modelBuilder.Entity<Cheque>(entity =>
+			{
+				entity.HasKey(e => e.Secuencial);
+				entity.ToTable("CHEQUE", "FBS_REMESAS");
+
+				entity.Property(e => e.CodigoCuentaCorriente).HasColumnName("CODIGOCUENTACORRIENTE");
+				entity.Property(e => e.CodigoCheque).HasColumnName("CODIGOCHEQUE");
+				entity.Property(e => e.SecuencialBancoEmisor).HasColumnName("SECUENCIALBANCOEMISOR");
+				entity.Property(e => e.SecuencialMoneda).HasColumnName("SECUENCIALMONEDA");
+				entity.Property(e => e.Valor).HasColumnName("VALOR");
+				entity.Property(e => e.CodigoUsuario).HasColumnName("CODIGOUSUARIO");
+				entity.Property(e => e.Estaenboveda).HasColumnName("ESTAENBOVEDA");
+				entity.Property(e => e.FechaSistemaIngreso).HasColumnName("FECHASISTEMAINGRESO");
+				entity.Property(e => e.FechaMaquinaIngreso).HasColumnName("FECHAMAQUINAINGRESO");
+				entity.Property(e => e.CodigoEstadoCheque).HasColumnName("CODIGOESTADOCHEQUE");
+				entity.Property(e => e.NumeroVerificdor).HasColumnName("NUMEROVERIFICADOR");
+
+			});
+			//
+			modelBuilder.Entity<ChequeMovimientoDetalle>(entity =>
+			{
+				entity.HasKey(e => e.Secuencial);
+				entity.ToTable("CHEQUE_MOVIMIENTODETALLE", "FBS_REMESAS");
+
+				entity.Property(e => e.SecuencialCheque).HasColumnName("SECUENCIALCHEQUE");
+				entity.Property(e => e.SecuencialMovimientoDetalle).HasColumnName("SECUENCIALMOVIMIENTODETALLE");
+
+
+			});
 		}
-    }
+	}
 }

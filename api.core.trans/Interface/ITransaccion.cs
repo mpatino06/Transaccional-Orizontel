@@ -13,5 +13,6 @@ namespace api.core.trans.Interface
 		List<Empresadenominacionfija> GetDenominacionMoneda(int empresa);
 		List<Transacciontipomovimiento> GetTransacciontipomovimientos(int secuencial);
 		TransaccionMoneda GetTransaccionMonedas(int empresa, int secuencial);
+		List<Banco> GetBancos();
 	}
 }

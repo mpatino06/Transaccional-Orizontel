@@ -14,10 +14,11 @@ namespace api.core.trans.Services
 	public class ClienteServices : ICliente
 	{
 		private FBS_SacPelileoContext context;
-
+		private Log4 errorLog;
 		public ClienteServices()
 		{
 			context = new FBS_SacPelileoContext();
+			errorLog = new Log4();
 		}
 
 		/// <summary>
@@ -35,14 +36,21 @@ namespace api.core.trans.Services
 			}
 			catch (Exception ex)
 			{
-				return null;
-				throw;
+				errorLog.MainLog("GetCliente " + ex.Message.ToString());
+				return null;				
 			}
 
 			return cliente;
 		}
 
-		public ClienteExtend GetClienteBySecEmpresaYNumeroCliente(int secEmpresa, int numCliente)
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="codigo"></param>
+		/// <param name="seleccion"></param> 0.Busqueda por Numero de Cliente 1. Busqueda por Identificacion 
+		/// <returns></returns>
+		public ClienteExtend GetClienteBycode(int codigo, int seleccion)
 		{
 			ClienteExtend clienteExtend = new ClienteExtend();
 			try
@@ -51,6 +59,7 @@ namespace api.core.trans.Services
 				qry = "SELECT ";
 				qry += "C.SECUENCIAL, ";
 				qry += "C.SECUENCIALOFICINA, ";
+				qry += "O.SECUENCIALEMPRESA, ";
 				qry += "C.SECUENCIALPERSONA, ";
 				qry += "C.NUMEROCLIENTE, ";
 				qry += "C.FECHAINGRESO, ";
@@ -77,7 +86,8 @@ namespace api.core.trans.Services
 				qry += "FBS_ORGANIZACIONES.OFICINA AS O ON C.SECUENCIALOFICINA = O.SECUENCIALDIVISION INNER JOIN ";
 				qry += "FBS_PERSONAS.PERSONA AS P ON C.SECUENCIALPERSONA = p.SECUENCIAL INNER JOIN ";
 				qry += "FBS_PERSONAS.TIPOIDENTIFICACION AS TI ON P.SECUENCIALTIPOIDENTIFICACION = TI.SECUENCIAL ";
-				qry += "WHERE(O.SECUENCIALEMPRESA ='" + secEmpresa + "') AND(C.NUMEROCLIENTE ='" + numCliente + "')";
+				qry += (seleccion == 0) ? "WHERE (C.NUMEROCLIENTE ='" + codigo + "')" : "WHERE (P.IDENTIFICACION ='" + codigo + "')";
+
 
 				using (SqlConnection conn = new SqlConnection(SQLHelper.ConnectionString))
 				{
@@ -88,36 +98,37 @@ namespace api.core.trans.Services
 						{
 							clienteExtend.SecuencialCliente = dr.GetInt32(0);
 							clienteExtend.SecuencialOficina = dr.GetInt32(1);
-							clienteExtend.SecuencialPersona = dr.GetInt32(2);
-							clienteExtend.NumeroCliente = dr.GetInt32(3);
-							clienteExtend.FechaIngreso = dr.GetDateTime(4);
-							clienteExtend.CodigoUsuarioOficial = dr.GetString(5);
-							clienteExtend.CodigoSectorEconomico = dr.GetString(6);
-							clienteExtend.CodigoTipoVinculacion = dr.GetString(7);
-							clienteExtend.CodigoCalificacionInterna = dr.GetString(8);
-							clienteExtend.SecuencialDivisionMercado = dr.GetInt32(9);
-							clienteExtend.CodigoEstadoCliente = dr.GetString(10);
-							clienteExtend.NumeroVerificadorCliente = dr.GetInt32(11);
-							clienteExtend.CodigoTipoIDentificacion = dr.GetString(12);
-							clienteExtend.NombreTipoIdentificacion = dr.GetString(13);
-							clienteExtend.Identificacion = dr.GetString(14);
-							clienteExtend.NombreUnido = dr.GetString(15);
-							clienteExtend.DireccionDomicilio = dr.GetString(16);
-							clienteExtend.ReferenciaDomiciliaria = dr.GetString(17);
-							clienteExtend.Email = dr.GetString(18);
-							clienteExtend.SecuencialTipoIdentificacion = dr.GetInt32(19);
-							clienteExtend.SecuencialDivPolResidencia = dr.GetInt32(20);
-							clienteExtend.CodigoPaisOrigen = dr.GetString(21);
-							clienteExtend.NumeroVerificador = dr.GetInt32(22);
-							clienteExtend.SecuencialDivActEcon = dr.GetInt32(23);
+							clienteExtend.SecuencialEmpresa = dr.GetInt32(2);
+							clienteExtend.SecuencialPersona = dr.GetInt32(3);
+							clienteExtend.NumeroCliente = dr.GetInt32(4);
+							clienteExtend.FechaIngreso = dr.GetDateTime(5);
+							clienteExtend.CodigoUsuarioOficial = dr.GetString(6);
+							clienteExtend.CodigoSectorEconomico = dr.GetString(7);
+							clienteExtend.CodigoTipoVinculacion = dr.GetString(8);
+							clienteExtend.CodigoCalificacionInterna = dr.GetString(9);
+							clienteExtend.SecuencialDivisionMercado = dr.GetInt32(10);
+							clienteExtend.CodigoEstadoCliente = dr.GetString(11);
+							clienteExtend.NumeroVerificadorCliente = dr.GetInt32(12);
+							clienteExtend.CodigoTipoIDentificacion = dr.GetString(13);
+							clienteExtend.NombreTipoIdentificacion = dr.GetString(14);
+							clienteExtend.Identificacion = dr.GetString(15);
+							clienteExtend.NombreUnido = dr.GetString(16);
+							clienteExtend.DireccionDomicilio = dr.GetString(17);
+							clienteExtend.ReferenciaDomiciliaria = dr.GetString(18);
+							clienteExtend.Email = dr.GetString(19);
+							clienteExtend.SecuencialTipoIdentificacion = dr.GetInt32(20);
+							clienteExtend.SecuencialDivPolResidencia = dr.GetInt32(21);
+							clienteExtend.CodigoPaisOrigen = dr.GetString(22);
+							clienteExtend.NumeroVerificador = dr.GetInt32(23);
+							clienteExtend.SecuencialDivActEcon = dr.GetInt32(24);
 						}
 					}
 				}
 			}
 			catch (Exception ex)
 			{
+				errorLog.MainLog("GetClienteBycode " + ex.Message.ToString());
 				clienteExtend = null;
-				throw;
 			}
 			return clienteExtend;
 		}

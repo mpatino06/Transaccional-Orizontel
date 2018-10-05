@@ -61,5 +61,15 @@ namespace api.core.trans.Controllers
 
 			return Ok(result);
 		}
+
+		[HttpGet("GetBancos")]
+		public async Task<IActionResult> GetBancos()
+		{
+			var result = await Task.Run(() => context.GetBancos());
+			if (result == null)
+				return NotFound("Bancos not Found");
+
+			return Ok(result);
+		}
 	}
 }

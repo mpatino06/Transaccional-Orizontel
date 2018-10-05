@@ -31,10 +31,10 @@ namespace api.core.trans.Controllers
 			return Ok(result);
 		}
 
-		[HttpGet("GetBySecEmpresaYNumeroCliente/{empresa}/{cliente}")]
-		public async Task<IActionResult> GetBySecEmpresaYNumeroCliente([FromRoute] int empresa, int cliente)
+		[HttpGet("GetClienteBycode/{codigo}/{seleccion}")]
+		public async Task<IActionResult> GetBySecEmpresaYNumeroCliente([FromRoute] int codigo, int seleccion)
 		{
-			var result = await Task.Run(() => context.GetClienteBySecEmpresaYNumeroCliente(empresa, cliente));
+			var result = await Task.Run(() => context.GetClienteBycode(codigo, seleccion));
 			if (result == null)
 				return NotFound("Cliente not Found");
 
