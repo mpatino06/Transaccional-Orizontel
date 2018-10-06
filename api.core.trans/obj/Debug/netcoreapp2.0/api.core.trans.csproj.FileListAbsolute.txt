@@ -9,7 +9,14 @@ E:\REPOSITORIOS\api.core.trans\api.core.trans\obj\Debug\netcoreapp2.0\api.core.t
 E:\REPOSITORIOS\api.core.trans\api.core.trans\obj\Debug\netcoreapp2.0\api.core.trans.AssemblyInfo.cs
 E:\REPOSITORIOS\api.core.trans\api.core.trans\obj\Debug\netcoreapp2.0\api.core.trans.dll
 E:\REPOSITORIOS\api.core.trans\api.core.trans\obj\Debug\netcoreapp2.0\api.core.trans.pdb
+E:\REPOSITORIOS\Transaccional-Orizontel\api.core.trans\bin\Debug\netcoreapp2.0\api.core.trans.deps.json
+E:\REPOSITORIOS\Transaccional-Orizontel\api.core.trans\bin\Debug\netcoreapp2.0\api.core.trans.runtimeconfig.json
+E:\REPOSITORIOS\Transaccional-Orizontel\api.core.trans\bin\Debug\netcoreapp2.0\api.core.trans.runtimeconfig.dev.json
+E:\REPOSITORIOS\Transaccional-Orizontel\api.core.trans\bin\Debug\netcoreapp2.0\api.core.trans.dll
+E:\REPOSITORIOS\Transaccional-Orizontel\api.core.trans\bin\Debug\netcoreapp2.0\api.core.trans.pdb
 E:\REPOSITORIOS\Transaccional-Orizontel\api.core.trans\obj\Debug\netcoreapp2.0\api.core.trans.csprojAssemblyReference.cache
 E:\REPOSITORIOS\Transaccional-Orizontel\api.core.trans\obj\Debug\netcoreapp2.0\api.core.trans.csproj.CoreCompileInputs.cache
 E:\REPOSITORIOS\Transaccional-Orizontel\api.core.trans\obj\Debug\netcoreapp2.0\api.core.trans.AssemblyInfoInputs.cache
 E:\REPOSITORIOS\Transaccional-Orizontel\api.core.trans\obj\Debug\netcoreapp2.0\api.core.trans.AssemblyInfo.cs
+E:\REPOSITORIOS\Transaccional-Orizontel\api.core.trans\obj\Debug\netcoreapp2.0\api.core.trans.dll
+E:\REPOSITORIOS\Transaccional-Orizontel\api.core.trans\obj\Debug\netcoreapp2.0\api.core.trans.pdb

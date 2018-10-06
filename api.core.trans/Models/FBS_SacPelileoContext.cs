@@ -1580,7 +1580,7 @@ namespace api.core.trans.Models
 				entity.Property(e => e.FechaSistemaIngreso).HasColumnName("FECHASISTEMAINGRESO");
 				entity.Property(e => e.FechaMaquinaIngreso).HasColumnName("FECHAMAQUINAINGRESO");
 				entity.Property(e => e.CodigoEstadoCheque).HasColumnName("CODIGOESTADOCHEQUE");
-				entity.Property(e => e.NumeroVerificdor).HasColumnName("NUMEROVERIFICADOR");
+				entity.Property(e => e.NumeroVerificador).HasColumnName("NUMEROVERIFICADOR");
 
 			});
 			//

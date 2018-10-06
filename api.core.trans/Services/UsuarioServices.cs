@@ -29,22 +29,13 @@ namespace api.core.trans.Services
 			UsuarioExtend usuarioExtend = new UsuarioExtend();
 			try
 			{
-				//usuarioExtend.usuario = context.Usuario.FirstOrDefault(a => a.Codigo.ToUpper() == login.User.ToUpper());
-				//if (usuarioExtend.usuario != null)
-				//{
 				string userpass = login.User.ToUpper().Trim() + login.Pass;
 				string resultsha1 = security.HashSHA1Decryption(userpass);
-
-				//	usuarioExtend.usuarioComplemento = context.UsuarioComplemento.FirstOrDefault(a => a.Codigousuario.ToUpper() == login.User.ToUpper() && a.Clave == resultsha1);
-				//}
 
 				string qry = "";
 				qry = "SELECT U.CODIGO, U.NOMBRE ";
 				qry += "FROM FBS_SEGURIDADES.USUARIO U JOIN FBS_SEGURIDADES.USUARIO_COMPLEMENTO UC on u.CODIGO = uc.CODIGOUSUARIO ";
 				qry += "where u.CODIGO = '" + login.User + "' AND UC.CLAVE = '" + resultsha1 + "'";
-
-
-				errorLog.MainLog("GetUsuarioByCode SQL " + qry);
 
 				using (SqlConnection conn = new SqlConnection(SQLHelper.ConnectionString))
 				{

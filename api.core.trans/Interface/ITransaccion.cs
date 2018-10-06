@@ -14,5 +14,6 @@ namespace api.core.trans.Interface
 		List<Transacciontipomovimiento> GetTransacciontipomovimientos(int secuencial);
 		TransaccionMoneda GetTransaccionMonedas(int empresa, int secuencial);
 		List<Banco> GetBancos();
+		bool SaveTransaccion(RegistrarTransaccion model);
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.core.trans.ExtendModels;
 using api.core.trans.Interface;
 using api.core.trans.Services;
 using Microsoft.AspNetCore.Http;
@@ -68,6 +69,16 @@ namespace api.core.trans.Controllers
 			var result = await Task.Run(() => context.GetBancos());
 			if (result == null)
 				return NotFound("Bancos not Found");
+
+			return Ok(result);
+		}
+
+		[HttpPost("SaveTransaccion")]
+		public async Task<IActionResult> SaveTransaccion([FromBody] RegistrarTransaccion transaccion)
+		{
+			var result = await Task.Run(() => context.SaveTransaccion(transaccion));
+			if (result == false)
+				return NotFound("Transaccion No Save");
 
 			return Ok(result);
 		}

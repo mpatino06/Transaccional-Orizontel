@@ -85,17 +85,20 @@ namespace api.core.trans.Services
 		{
 			bool result = true;
 			string tableName = string.Empty;
-			try
+
+			using (var transaction = context.Database.BeginTransaction())
 			{
-				using(var transaction = context.Database.BeginTransaction())
+				try
 				{
-					int secEmpresa = 0, secCliente=0, secOficina = 0, numCliente, secCuenta= 0, codigoCuenta=0, secTransaccion = 18, secMoneda=0, secCuentaSeleccionada =0;
-					decimal montoTransaccion = 0;
-					string codUsuario = "", codTipoMovimiento = "";
+					//int secEmpresa = 0, secCliente = 0, secOficina = 0, numCliente, secCuenta = 0, codigoCuenta = 0, secTransaccion = 18, secMoneda = 0, secCuentaSeleccionada = 0;
+					decimal montoTransaccionTotal = model.Transacciones.TipoMovimiento.Sum(a=> a.ValueInsert);
+					decimal monttoTransaccionEfectivo = model.Transacciones.TipoMovimiento.FirstOrDefault(a => a.Codigotipomovimiento =="Efectivo").ValueInsert;
+					decimal monttoTransaccionCheque = model.Transacciones.TipoMovimiento.FirstOrDefault(a => a.Codigotipomovimiento == "Cheque").ValueInsert;
+					//string codUsuario = "", codTipoMovimiento = "";
 
 					//CON 8
 					tableName = "EmpresaDocumento";
-					var _empresaDocumento = context.EmpresaDocumento.FirstOrDefault(a => a.Secuencialempresa == secEmpresa);
+					var _empresaDocumento = context.EmpresaDocumento.FirstOrDefault(a => a.Secuencialempresa == model.SecEmpresa);
 					if (_empresaDocumento != null)
 					{
 						//CON 9
@@ -111,8 +114,8 @@ namespace api.core.trans.Services
 							Documento = _empresaDocumento.Ultimonumerodocumentomov.ToString(),
 							Fecha = DateTime.Now.Date,
 							Fechamaquina = DateTime.Now, //TODO esta fecha tiene que venir con horas minutos y segundos
-							Codigousuario = codUsuario,
-							Secuencialoficinausuario = secOficina,
+							Codigousuario = model.CodigoUsuario,
+							Secuencialoficinausuario = model.SecOficina,
 							Estaimpreso = false,
 							Numeroverificador = 1
 						};
@@ -120,12 +123,11 @@ namespace api.core.trans.Services
 						context.SaveChanges();
 
 
-
 						//12
-						var _cuentaMaestro = context.Cuentamaestro.FirstOrDefault(a => a.Secuencial == secCuentaSeleccionada);
+						var _cuentaMaestro = context.Cuentamaestro.FirstOrDefault(a => a.Secuencial == model.SecuencialCuenta);
 						if (_cuentaMaestro != null)
 						{
-							_cuentaMaestro.Numeroverificador += 1; 
+							_cuentaMaestro.Numeroverificador += 1;
 
 							context.Attach(_cuentaMaestro);
 							context.SaveChanges();
@@ -136,10 +138,10 @@ namespace api.core.trans.Services
 						Movimientodetalle movimientodetalle = new Movimientodetalle
 						{
 							Secuencialmovimiento = movimiento.Secuencial,
-							Secuencialtransaccion = secTransaccion,
-							Secuencialmoneda = secMoneda,
-							Valor = montoTransaccion,
-							Secuencialoficinaafectada = secOficina
+							Secuencialtransaccion = model.SecuencialTransaccion,
+							Secuencialmoneda = model.SecuencialMoneda,
+							Valor = montoTransaccionTotal,
+							Secuencialoficinaafectada = model.SecOficina
 						};
 						context.Movimientodetalle.Add(movimientodetalle);
 						context.SaveChanges();
@@ -152,12 +154,12 @@ namespace api.core.trans.Services
 							//CON 14
 							tableName = "CON14 CuentacomponenteVistaEfectivo";
 							//var cuentacomponenteVista = context.CuentacomponenteVista.FirstOrDefault(a => a.Secuencialcuenta == secCuenta && a.Secuencialcomponentevista == 1);
-							var cuentacomponenteVista = context.CuentacomponenteVista.Where(a => a.Secuencialcuenta == secCuenta).ToList();
+							var cuentacomponenteVista = context.CuentacomponenteVista.Where(a => a.Secuencialcuenta == model.SecuencialCuenta).ToList();
 							var cuentacomponenteVistaSaldoEfectivo = cuentacomponenteVista.FirstOrDefault(a => a.Secuencialcomponentevista == 1);
 							if (cuentacomponenteVistaSaldoEfectivo != null)
 							{
 
-								cuentacomponenteVistaSaldoEfectivo.Saldo += montoTransaccion;
+								cuentacomponenteVistaSaldoEfectivo.Saldo += monttoTransaccionEfectivo;
 								cuentacomponenteVistaSaldoEfectivo.Numeroverificador += 1;
 
 								context.Attach(cuentacomponenteVistaSaldoEfectivo);
@@ -166,14 +168,14 @@ namespace api.core.trans.Services
 
 							//CON 15
 							tableName = "CON15 movimientocuentacompVistaEfectivo";
-							var saldoTotalCuenta = cuentacomponenteVista.Sum(a => a.Saldo) + montoTransaccion;
+							var saldoTotalCuenta = cuentacomponenteVista.Sum(a => a.Saldo) + monttoTransaccionEfectivo;
 							MovimientocuentacompVista movimientocuentacompVista = new MovimientocuentacompVista
 							{
 								Secuencialmovimientodetalle = movimientodetalle.Secuencial,
-								Secuencialcuenta = secCuenta,
+								Secuencialcuenta = model.SecuencialCuenta,
 								Secuencialcomponentevista = 1,
-								Codigotipomovimiento = codTipoMovimiento,
-								Valor = montoTransaccion,
+								Codigotipomovimiento = "Cheque",
+								Valor = monttoTransaccionEfectivo,
 								Saldo = cuentacomponenteVistaSaldoEfectivo.Saldo, //montoTransaccion,
 								Saldocuenta = saldoTotalCuenta // cuentacomponenteVista.Saldo
 							};
@@ -186,16 +188,16 @@ namespace api.core.trans.Services
 							var cuentaContable = context.ComponenteCuentaContable.FirstOrDefault(a => a.Secuencialcomponente == 1);
 							Registrocontable registrocontable = new Registrocontable
 							{
-								Valor = montoTransaccion,
+								Valor = monttoTransaccionEfectivo,
 								Esdebito = false,
 								Documento = _empresaDocumento.Ultimonumerodocumentomov.ToString(),
-								Detalle = model.NombreTransaccion + " " + codigoCuenta.ToString(),
+								Detalle = model.NombreTransaccion + " " + model.CodigoCuenta.ToString(),
 								Estacontabilizado = false,
 								Secuencialcuentacontable = cuentaContable.SecuencialCuentaContable,
-								Secuencialoficina = secOficina,
+								Secuencialoficina = model.SecOficina,
 								Secuencialperfilcontable = 1,
-								Codigousuario = codUsuario,
-								Secuencialmoneda = secMoneda,
+								Codigousuario = model.CodigoUsuario,
+								Secuencialmoneda = model.SecuencialMoneda,
 								Fechasistemaregistro = DateTime.Now.Date,
 								Fechamaquinaregistro = DateTime.Now,
 								Secuencialmovimientodetalle = movimientodetalle.Secuencial,
@@ -213,19 +215,20 @@ namespace api.core.trans.Services
 							Movimientoimpresion movimientoimpresion = new Movimientoimpresion
 							{
 								Fecha = DateTime.Now,
-								Depositos = montoTransaccion.ToString(),
+								Depositos = monttoTransaccionEfectivo.ToString(),
 								Retiros = "0",
 								Saldo = saldoTotalCuenta.ToString(), // cuentacomponenteVista.Saldo.ToString(),
 								Transaccion = model.SiglasTransaccion,
-								Secuencialcliente = secCliente,
-								Secuencialcuenta = secCuenta,
-								Operador = codUsuario,
+								Secuencialcliente = model.secCliente,
+								Secuencialcuenta = model.SecuencialCuenta,
+								Operador = model.CodigoUsuario,
 								Estaimpresa = false,
 								Numeoverificador = 0,
-								Efectivo = montoTransaccion.ToString(),
+								Efectivo = monttoTransaccionEfectivo.ToString(),
+								Cheque = "0,00",
 								Saldodisponible = saldoTotalCuenta.ToString(),  //cuentacomponenteVista.Saldo.ToString(),
 								Saldoobligatorios = "0",
-								Valortransaccion = montoTransaccion.ToString(),
+								Valortransaccion = monttoTransaccionEfectivo.ToString(),
 								Eslinearendfinanc = false,
 								Detallerendfinanc = "M"
 							};
@@ -237,7 +240,7 @@ namespace api.core.trans.Services
 							MovimientodetalleCuenta movimientodetalleCuenta = new MovimientodetalleCuenta
 							{
 								Secuencialmovimientodetalle = movimientodetalle.Secuencial,
-								Secuencialcuenta = secCuenta,
+								Secuencialcuenta = model.SecuencialCuenta,
 								Saldocuenta = saldoTotalCuenta, // cuentacomponenteVista.Saldo,
 								Codigoestadocuenta = "A"
 							};
@@ -247,14 +250,14 @@ namespace api.core.trans.Services
 
 							////CON 21
 							tableName = "CON21 ventanilla - Efecivo";
-							var getVentanillaCheque = context.Ventanilla.FirstOrDefault(a => a.Secuencial == secCuenta);
+							var getVentanillaCheque = context.Ventanilla.FirstOrDefault(a => a.Secuencial == model.SecuencialCuenta);
 							int secuencialVentanillaEfectivo = 0;
 							if (getVentanillaCheque == null)
 							{
 								Ventanilla ventanillaEfectivo = new Ventanilla
 								{
-									Codigousuario = codUsuario,
-									Secuencialoficina = secOficina,
+									Codigousuario = model.CodigoUsuario,
+									Secuencialoficina = model.SecOficina,
 									Fecha = DateTime.Now,
 									Abiertaautomaticamente = false,
 									Estacerrada = false,
@@ -275,8 +278,6 @@ namespace api.core.trans.Services
 								context.SaveChanges();
 							}
 
-	
-
 
 							//CON 22 SE REPITE PORQUE GUARDA LA TRANSACCION EN CAJA QUE ES CODIGO 3
 							tableName = "CON22 Movimientodetalle";
@@ -284,9 +285,9 @@ namespace api.core.trans.Services
 							{
 								Secuencialmovimiento = movimiento.Secuencial,
 								Secuencialtransaccion = 3,
-								Secuencialmoneda = secMoneda,
-								Valor = montoTransaccion,
-								Secuencialoficinaafectada = secOficina
+								Secuencialmoneda = model.SecuencialMoneda,
+								Valor = monttoTransaccionEfectivo,
+								Secuencialoficinaafectada = model.SecOficina
 							};
 							context.Movimientodetalle.Add(movimientodetalle2);
 							context.SaveChanges();
@@ -297,9 +298,9 @@ namespace api.core.trans.Services
 							{
 								Secuencialventanilla = secuencialVentanillaEfectivo,
 								Secuencialcomponentecaja = 26,
-								Secuencialmoneda = secMoneda,
+								Secuencialmoneda = model.SecuencialMoneda,
 								Cantidad = 1, //CREO q ES LA CANTIDA DE billete  
-								Saldo = montoTransaccion, //creo q es la cantidad de la moneda
+								Saldo = monttoTransaccionEfectivo, //creo q es la cantidad de la moneda
 								Valorcuadre = 0
 							};
 							context.VentanillacomponenteCaja.Add(ventanillacomponente);
@@ -313,8 +314,8 @@ namespace api.core.trans.Services
 								Secuencialventanillacompcaja = ventanillacomponente.Secuencial,
 								Codigotipomovimientocaja = "Efectivo",
 								Cantidad = 1,
-								Valor = montoTransaccion,
-								Saldo = montoTransaccion
+								Valor = monttoTransaccionEfectivo,
+								Saldo = monttoTransaccionEfectivo
 							};
 							context.MovimientoventanillacompCaja.Add(movimientoventanillacompCaja);
 							context.SaveChanges();
@@ -324,16 +325,16 @@ namespace api.core.trans.Services
 							var codigoCuentaContable = context.ComponenteCuentaContable.FirstOrDefault(a => a.Secuencialcomponente == 26);
 							Registrocontable registrocontable2 = new Registrocontable
 							{
-								Valor = montoTransaccion,
+								Valor = monttoTransaccionEfectivo,
 								Esdebito = true,
 								Documento = _empresaDocumento.Ultimonumerodocumentomov.ToString(),
-								Detalle = codUsuario + " " + "Efectivo",
+								Detalle = model.CodigoUsuario + " " + "Efectivo",
 								Estacontabilizado = false,
 								Secuencialcuentacontable = codigoCuentaContable.SecuencialCuentaContable,
-								Secuencialoficina = secOficina,
+								Secuencialoficina = model.SecOficina,
 								Secuencialperfilcontable = 1,
-								Codigousuario = codUsuario,
-								Secuencialmoneda = secMoneda,
+								Codigousuario = model.CodigoUsuario,
+								Secuencialmoneda = model.SecuencialMoneda,
 								Fechasistemaregistro = DateTime.Now.Date,
 								Fechamaquinaregistro = DateTime.Now,
 								Secuencialmovimientodetalle = movimientodetalle2.Secuencial,
@@ -348,12 +349,12 @@ namespace api.core.trans.Services
 
 
 							//29 (DENOMINACION DE BILLETES) //AQUI DEBE IR EL BUCLE DE LAS MONEDAS
-							Ventanillacomponentedenomnefe ventanillacomponentedenomnefe = new Ventanillacomponentedenomnefe
-							{
-								Secuencialventanillacompcaja = ventanillacomponente.Secuencial,
-								Denominacion = 10,
-								Cantidad = 1, // moneda selecciona 
-							};
+							//Ventanillacomponentedenomnefe ventanillacomponentedenomnefe = new Ventanillacomponentedenomnefe
+							//{
+							//	Secuencialventanillacompcaja = ventanillacomponente.Secuencial,
+							//	Denominacion = 10,
+							//	Cantidad = 1, // moneda selecciona 
+							//};
 						}
 
 						//VALIDA SI EL DEPOSITO FUE EN CHEQUE
@@ -362,12 +363,12 @@ namespace api.core.trans.Services
 							//CON 14
 							tableName = "CON14 CuentacomponenteVistaCheque";
 							//var cuentacomponenteVista = context.CuentacomponenteVista.FirstOrDefault(a => a.Secuencialcuenta == secCuenta && a.Secuencialcomponentevista == 1);
-							var cuentacomponenteVista = context.CuentacomponenteVista.Where(a => a.Secuencialcuenta == secCuenta).ToList();
+							var cuentacomponenteVista = context.CuentacomponenteVista.Where(a => a.Secuencialcuenta == model.SecuencialCuenta).ToList();
 							var cuentacomponenteVistaSaldoEfectivo = cuentacomponenteVista.FirstOrDefault(a => a.Secuencialcomponentevista == 2);
 							if (cuentacomponenteVistaSaldoEfectivo != null)
 							{
 
-								cuentacomponenteVistaSaldoEfectivo.Saldo += montoTransaccion;
+								cuentacomponenteVistaSaldoEfectivo.Saldo += monttoTransaccionCheque;
 								cuentacomponenteVistaSaldoEfectivo.Numeroverificador += 1;
 
 								context.Attach(cuentacomponenteVistaSaldoEfectivo);
@@ -376,14 +377,14 @@ namespace api.core.trans.Services
 
 							//CON 15
 							tableName = "CON15 movimientocuentacompVistaCheque";
-							var saldoTotalCuenta = cuentacomponenteVista.Sum(a => a.Saldo) + montoTransaccion;
+							var saldoTotalCuenta = cuentacomponenteVista.Sum(a => a.Saldo) + monttoTransaccionCheque;
 							MovimientocuentacompVista movimientocuentacompVista = new MovimientocuentacompVista
 							{
 								Secuencialmovimientodetalle = movimientodetalle.Secuencial,
-								Secuencialcuenta = secCuenta,
+								Secuencialcuenta = model.SecuencialCuenta,
 								Secuencialcomponentevista = 2,
-								Codigotipomovimiento = codTipoMovimiento,
-								Valor = montoTransaccion,
+								Codigotipomovimiento = "Efectivo",
+								Valor = monttoTransaccionCheque,
 								Saldo = cuentacomponenteVistaSaldoEfectivo.Saldo, //montoTransaccion,
 								Saldocuenta = saldoTotalCuenta // cuentacomponenteVista.Saldo
 							};
@@ -396,16 +397,16 @@ namespace api.core.trans.Services
 							var cuentaContable = context.ComponenteCuentaContable.FirstOrDefault(a => a.Secuencialcomponente == 2);
 							Registrocontable registrocontable = new Registrocontable
 							{
-								Valor = montoTransaccion,
+								Valor = monttoTransaccionCheque,
 								Esdebito = false,
 								Documento = _empresaDocumento.Ultimonumerodocumentomov.ToString(),
-								Detalle = model.NombreTransaccion + " " + codigoCuenta.ToString(),
+								Detalle = model.NombreTransaccion + " " + model.CodigoCuenta.ToString(),
 								Estacontabilizado = false,
 								Secuencialcuentacontable = cuentaContable.SecuencialCuentaContable,
-								Secuencialoficina = secOficina,
+								Secuencialoficina = model.SecOficina,
 								Secuencialperfilcontable = 1,
-								Codigousuario = codUsuario,
-								Secuencialmoneda = secMoneda,
+								Codigousuario = model.CodigoUsuario,
+								Secuencialmoneda = model.SecuencialMoneda,
 								Fechasistemaregistro = DateTime.Now.Date,
 								Fechamaquinaregistro = DateTime.Now,
 								Secuencialmovimientodetalle = movimientodetalle.Secuencial,
@@ -423,20 +424,20 @@ namespace api.core.trans.Services
 							Movimientoimpresion movimientoimpresion = new Movimientoimpresion
 							{
 								Fecha = DateTime.Now,
-								Depositos = montoTransaccion.ToString(),
+								Depositos = monttoTransaccionCheque.ToString(),
 								Retiros = "0",
 								Saldo = saldoTotalCuenta.ToString(), // cuentacomponenteVista.Saldo.ToString(),
 								Transaccion = model.SiglasTransaccion,
-								Secuencialcliente = secCliente,
-								Secuencialcuenta = secCuenta,
-								Operador = codUsuario,
+								Secuencialcliente = model.secCliente,
+								Secuencialcuenta = model.SecuencialCuenta,
+								Operador = model.CodigoUsuario,
 								Estaimpresa = false,
 								Numeoverificador = 0,
 								Efectivo = "0,00",
-								Cheque = montoTransaccion.ToString(),
+								Cheque = monttoTransaccionCheque.ToString(),
 								Saldodisponible = saldoTotalCuenta.ToString(),  //cuentacomponenteVista.Saldo.ToString(),
 								Saldoobligatorios = "0",
-								Valortransaccion = montoTransaccion.ToString(),
+								Valortransaccion = monttoTransaccionCheque.ToString(),
 								Eslinearendfinanc = false,
 								Detallerendfinanc = ""
 							};
@@ -445,23 +446,34 @@ namespace api.core.trans.Services
 
 							//CON 20 
 							tableName = "CON20 MovimientodetalleCuentaCheque";
-							MovimientodetalleCuenta movimientodetalleCuenta = new MovimientodetalleCuenta
+							var existMovimientoDetalleCuenta = context.MovimientodetalleCuenta.FirstOrDefault(a => a.Secuencialmovimientodetalle == movimientodetalle.Secuencial);
+
+							if (existMovimientoDetalleCuenta == null)
 							{
-								Secuencialmovimientodetalle = movimientodetalle.Secuencial,
-								Secuencialcuenta = secCuenta,
-								Saldocuenta = saldoTotalCuenta, // cuentacomponenteVista.Saldo,
-								Codigoestadocuenta = "A"
-							};
-							context.MovimientodetalleCuenta.Add(movimientodetalleCuenta);
-							context.SaveChanges();
+								MovimientodetalleCuenta movimientodetalleCuentaCheque = new MovimientodetalleCuenta
+								{
+									Secuencialmovimientodetalle = movimientodetalle.Secuencial,
+									Secuencialcuenta = model.SecuencialCuenta,
+									Saldocuenta = saldoTotalCuenta, // cuentacomponenteVista.Saldo,
+									Codigoestadocuenta = "A"
+								};
+								context.MovimientodetalleCuenta.Add(movimientodetalleCuentaCheque);
+								context.SaveChanges();
+							}
+							else
+							{
+								existMovimientoDetalleCuenta.Saldocuenta = saldoTotalCuenta;
+								context.Attach(existMovimientoDetalleCuenta);
+								context.SaveChanges();
+							}
 
 
 							////CON 21
 							//tableName = "CON21 ventanilla";
-							Ventanilla ventanilla = new Ventanilla
+							Ventanilla ventanillaCheque = new Ventanilla
 							{
-								Codigousuario = codUsuario,
-								Secuencialoficina = secOficina,
+								Codigousuario = model.CodigoUsuario,
+								Secuencialoficina = model.SecOficina,
 								Fecha = DateTime.Now,
 								Abiertaautomaticamente = false,
 								Estacerrada = false,
@@ -469,7 +481,7 @@ namespace api.core.trans.Services
 								Numerovecescuadrada = 0,
 								Numeroverificador = 0
 							};
-							context.Ventanilla.Add(ventanilla);
+							context.Ventanilla.Add(ventanillaCheque);
 							context.SaveChanges();
 
 
@@ -479,9 +491,9 @@ namespace api.core.trans.Services
 							{
 								Secuencialmovimiento = movimiento.Secuencial,
 								Secuencialtransaccion = 3,
-								Secuencialmoneda = secMoneda,
-								Valor = montoTransaccion,
-								Secuencialoficinaafectada = secOficina
+								Secuencialmoneda = model.SecuencialMoneda,
+								Valor = monttoTransaccionCheque,
+								Secuencialoficinaafectada = model.SecOficina
 							};
 							context.Movimientodetalle.Add(movimientodetalleCheque2);
 							context.SaveChanges();
@@ -490,11 +502,11 @@ namespace api.core.trans.Services
 							tableName = "CON26 ventanillacomponenteCheque";
 							VentanillacomponenteCaja ventanillacomponente = new VentanillacomponenteCaja
 							{
-								Secuencialventanilla = ventanilla.Secuencial,
+								Secuencialventanilla = ventanillaCheque.Secuencial,
 								Secuencialcomponentecaja = 27,
-								Secuencialmoneda = secMoneda,
+								Secuencialmoneda = model.SecuencialMoneda,
 								Cantidad = 1, //CREO q ES LA CANTIDA DE billete  
-								Saldo = montoTransaccion, //creo q es la cantidad de la moneda
+								Saldo = monttoTransaccionCheque, //creo q es la cantidad de la moneda
 								Valorcuadre = 0
 							};
 							context.VentanillacomponenteCaja.Add(ventanillacomponente);
@@ -508,8 +520,8 @@ namespace api.core.trans.Services
 								Secuencialventanillacompcaja = ventanillacomponente.Secuencial,
 								Codigotipomovimientocaja = "ChequeIngreso",
 								Cantidad = 1,
-								Valor = montoTransaccion,
-								Saldo = montoTransaccion
+								Valor = monttoTransaccionCheque,
+								Saldo = monttoTransaccionCheque
 							};
 							context.MovimientoventanillacompCaja.Add(movimientoventanillacompCaja);
 							context.SaveChanges();
@@ -519,16 +531,16 @@ namespace api.core.trans.Services
 							var codigoCuentaContable = context.ComponenteCuentaContable.FirstOrDefault(a => a.Secuencialcomponente == 26);
 							Registrocontable registrocontable2 = new Registrocontable
 							{
-								Valor = montoTransaccion,
+								Valor = monttoTransaccionCheque,
 								Esdebito = true,
 								Documento = _empresaDocumento.Ultimonumerodocumentomov.ToString(),
-								Detalle = codUsuario + " " + "Efectivo",
+								Detalle = model.CodigoUsuario + " " + "Efectivo",
 								Estacontabilizado = false,
 								Secuencialcuentacontable = codigoCuentaContable.SecuencialCuentaContable,
-								Secuencialoficina = secOficina,
+								Secuencialoficina = model.SecOficina,
 								Secuencialperfilcontable = 1,
-								Codigousuario = codUsuario,
-								Secuencialmoneda = secMoneda,
+								Codigousuario = model.CodigoUsuario,
+								Secuencialmoneda = model.SecuencialMoneda,
 								Fechasistemaregistro = DateTime.Now.Date,
 								Fechamaquinaregistro = DateTime.Now,
 								Secuencialmovimientodetalle = movimientodetalleCheque2.Secuencial,
@@ -541,17 +553,17 @@ namespace api.core.trans.Services
 							context.Registrocontable.Add(registrocontable2);
 							context.SaveChanges();
 
-							
+
 							foreach (var item in model.Cheques)
 							{
 								var cheque = new Cheque
 								{
 									CodigoCuentaCorriente = item.CodigoCuentaCorriente,
 									CodigoCheque = item.CodigoCheque,
-									SecuencialBancoEmisor= item.SecuencialBancoEmisor,
-									SecuencialMoneda = secMoneda,
+									SecuencialBancoEmisor = item.SecuencialBancoEmisor,
+									SecuencialMoneda = model.SecuencialMoneda,
 									Valor = item.Valor,
-									CodigoUsuario = codUsuario,
+									CodigoUsuario = model.CodigoUsuario,
 									Estaenboveda = false,
 									FechaSistemaIngreso = DateTime.Now.Date,
 									FechaMaquinaIngreso = DateTime.Now,
@@ -584,12 +596,15 @@ namespace api.core.trans.Services
 
 
 					}
+					transaction.Commit();
 				}
-			}
-			catch (Exception ex)
-			{
-				errorLog.MainLog("SaveTransaccon " + tableName + " MESSAGE " + ex.Message.ToString());
-				result = false;
+				catch (Exception ex)
+				{
+					errorLog.MainLog("SaveTransaccion " + tableName + " MESSAGE " + ex.Message.ToString());
+					result = false;
+					transaction.Rollback();
+				}
+
 			}
 			return result;
 		}
