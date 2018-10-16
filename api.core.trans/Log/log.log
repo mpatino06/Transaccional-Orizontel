@@ -6,3 +6,28 @@
 2018-10-05 15:01:11,068 ERROR - SaveTransaccion CON19 movimientoimpresion MESSAGE An error occurred while updating the entries. See the inner exception for details.
 2018-10-05 15:15:49,378 ERROR - SaveTransaccion CON20 MovimientodetalleCuentaCheque MESSAGE The instance of entity type 'MovimientodetalleCuenta' cannot be tracked because another instance with the same key value for {'Secuencialmovimientodetalle'} is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the conflicting key values.
 2018-10-05 15:25:47,182 ERROR - SaveTransaccion CON20 MovimientodetalleCuentaCheque MESSAGE The instance of entity type 'MovimientodetalleCuenta' cannot be tracked because another instance with the same key value for {'Secuencialmovimientodetalle'} is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the conflicting key values.
+2018-10-08 16:24:12,612 ERROR - GetBancos, ERROR 1
+2018-10-08 16:24:34,359 ERROR - GetBancos, ERROR 2
+2018-10-08 16:24:35,384 ERROR - GetBancos, ERROR 3
+2018-10-08 16:24:35,619 ERROR - GetBancos, ERROR 4
+2018-10-08 16:24:35,882 ERROR - GetBancos, ERROR 5
+2018-10-08 16:24:36,070 ERROR - GetBancos, ERROR 6
+2018-10-08 16:24:36,225 ERROR - GetBancos, ERROR 7
+2018-10-08 16:24:36,231 ERROR - GetBancos, ERROR 8
+2018-10-08 16:24:36,365 ERROR - GetBancos, ERROR 9
+2018-10-08 16:24:36,482 ERROR - GetBancos, ERROR 10
+2018-10-08 16:24:36,611 ERROR - GetBancos, ERROR 11
+2018-10-08 16:24:36,766 ERROR - GetBancos, ERROR 12
+2018-10-08 16:24:36,824 ERROR - GetBancos, ERROR 12
+2018-10-08 16:24:36,922 ERROR - GetBancos, ERROR 13
+2018-10-08 16:24:36,954 ERROR - GetBancos, ERROR 14
+2018-10-08 16:24:37,072 ERROR - GetBancos, ERROR 15
+2018-10-08 16:24:37,137 ERROR - GetBancos, ERROR 16
+2018-10-08 16:24:37,190 ERROR - GetBancos, ERROR 30
+2018-10-15 23:47:49,119 ERROR - SaveTransaccion CON28 Registrocontable Error: Object reference not set to an instance of an object.
+2018-10-15 23:56:15,108 ERROR - SaveTransaccion CON28 Registrocontable Error: Object reference not set to an instance of an object.
+2018-10-16 00:25:14,397 ERROR - SaveTransaccion CON21 ventanilla - Efecivo Error: An error occurred while updating the entries. See the inner exception for details.
+2018-10-16 00:26:13,226 ERROR - SaveTransaccion CON21 ventanilla - Efecivo Error: An error occurred while updating the entries. See the inner exception for details.
+2018-10-16 00:31:52,092 ERROR - SaveTransaccion CON21 ventanilla - Efecivo Error: An error occurred while updating the entries. See the inner exception for details.
+2018-10-16 00:33:33,974 ERROR - SaveTransaccion CON21 ventanilla - Efecivo Error: An error occurred while updating the entries. See the inner exception for details.
+2018-10-16 03:02:41,176 ERROR - SaveTransaccion CON26 ventanillacomponente - Efectivo Error: An error occurred while updating the entries. See the inner exception for details.

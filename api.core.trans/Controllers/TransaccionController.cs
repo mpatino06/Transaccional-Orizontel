@@ -73,11 +73,23 @@ namespace api.core.trans.Controllers
 			return Ok(result);
 		}
 
+		//GetTransaccionMobile
+		[HttpGet("GetTransaccionMobile/{codigoUsuario}/{fecha}")]
+		public async Task<IActionResult> GetTransaccionMobile([FromRoute] string codigoUsuario, string fecha)
+		{
+			var result = await Task.Run(() => context.GetTransaccionMobile(codigoUsuario, fecha));
+			if (result == null)
+				return NotFound("Transacciones not Found");
+
+			return Ok(result);
+		}
+
+
 		[HttpPost("SaveTransaccion")]
 		public async Task<IActionResult> SaveTransaccion([FromBody] RegistrarTransaccion transaccion)
 		{
 			var result = await Task.Run(() => context.SaveTransaccion(transaccion));
-			if (result == false)
+			if (!result.Result)
 				return NotFound("Transaccion No Save");
 
 			return Ok(result);

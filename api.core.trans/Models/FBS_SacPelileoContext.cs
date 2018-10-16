@@ -56,6 +56,11 @@ namespace api.core.trans.Models
 		public virtual DbSet<Banco> Banco { get; set; }
 		public virtual DbSet<Cheque> Cheque { get; set; }
 		public virtual DbSet<ChequeMovimientoDetalle> ChequeMovimientoDetalle { get; set; }
+		public virtual DbSet<Transaccionmobile> Transaccionmobile { get; set; }
+		public virtual DbSet<Empresafechacajero> Empresafechacajero { get; set; }
+		public virtual DbSet<Chequeefectivizacion> Chequeefectivizacion { get; set; }
+		public virtual DbSet<Ruta> Ruta { get; set; }
+		public virtual DbSet<Calendario> Calendario { get; set; }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1591,8 +1596,68 @@ namespace api.core.trans.Models
 
 				entity.Property(e => e.SecuencialCheque).HasColumnName("SECUENCIALCHEQUE");
 				entity.Property(e => e.SecuencialMovimientoDetalle).HasColumnName("SECUENCIALMOVIMIENTODETALLE");
+			});
 
+			modelBuilder.Entity<Transaccionmobile>(entity =>
+			{
+				entity.HasKey(e => e.Secuencial);
+				entity.ToTable("TRANSACCIONMOBILE", "OR");
 
+				entity.Property(e => e.CodigoUsuario).HasColumnName("CODIGOUSUARIO");
+				entity.Property(e => e.NumeroCliente).HasColumnName("NUMEROCLIENTE");
+				entity.Property(e => e.Fecha).HasColumnName("FECHA");
+				entity.Property(e => e.Monto).HasColumnName("MONTO");
+				entity.Property(e => e.Longitud).HasColumnName("LONGITUD");
+				entity.Property(e => e.Latitud).HasColumnName("LATITUD");
+			});
+
+			//Empresafechacajero
+			modelBuilder.Entity<Empresafechacajero>(entity =>
+			{
+				entity.HasKey(e => e.Secuencialempresa);
+				entity.ToTable("EMPRESA_FECHACAJERO", "FBS_GENERALES");
+
+				entity.Property(e => e.Fecha).HasColumnName("FECHA");
+				entity.Property(e => e.Estaactiva).HasColumnName("ESTAACTIVA");
+			});
+
+			modelBuilder.Entity<Chequeefectivizacion>(entity =>
+			{
+				entity.HasKey(e => e.SecuencialCheque);
+				entity.ToTable("CHEQUE_EFECTIVIZACION", "FBS_REMESAS");
+
+				entity.Property(e => e.FechaSistema).HasColumnName("FECHASISTEMA");
+				entity.Property(e => e.FechaMaquina).HasColumnName("FECHAMAQUINA");
+				entity.Property(e => e.CodigoUsuario).HasColumnName("CODIGOUSUARIO");
+				entity.Property(e => e.SecuencialOficina).HasColumnName("SECUENCIALOFICINA");
+				entity.Property(e => e.Documento).HasColumnName("DOCUMENTO");
+				entity.Property(e => e.EsManual).HasColumnName("ESMANUAL");
+				entity.Property(e => e.EstuvoenTransito).HasColumnName("ESTUVOENTRANSITO");
+			});
+
+			modelBuilder.Entity<Ruta>(entity =>
+			{
+				entity.HasKey(e => e.Secuencial);
+				entity.ToTable("RUTA", "FBS_REMESAS");
+
+				entity.Property(e => e.Secuencialbancoemisor).HasColumnName("SECUENCIALBANCOEMISOR");
+				entity.Property(e => e.Secuencialbancodeposito).HasColumnName("SECUENCIALBANCODEPOSITO");
+				entity.Property(e => e.Diastransito).HasColumnName("DIASTRANSITO");
+				entity.Property(e => e.Estaactivo).HasColumnName("ESTAACTIVO");
+				entity.Property(e => e.Numeroverificador).HasColumnName("NUMEROVERIFICADOR");
+			});
+
+			modelBuilder.Entity<Calendario>(entity =>
+			{
+				entity.HasKey(e => e.Secuencial);
+				entity.ToTable("CALENDARIO", "FBS_GENERALES");
+
+				entity.Property(e => e.SecuencialEmpresa).HasColumnName("SECUENCIALEMPRESA");
+				entity.Property(e => e.FechaSistema).HasColumnName("FECHASISTEMA");
+				entity.Property(e => e.EstaCerrado).HasColumnName("ESTACERRADO");
+				entity.Property(e => e.EsFeriado).HasColumnName("ESFERIADO");
+				entity.Property(e => e.NumeroVerificador).HasColumnName("NUMEROVERIFICADOR");
+				entity.Property(e => e.EsHabil).HasColumnName("ESHABIL");
 			});
 		}
 	}
