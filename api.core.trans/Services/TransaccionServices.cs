@@ -155,24 +155,31 @@ namespace api.core.trans.Services
 
 							//CON 14
 							tableName = "CON14 CuentacomponenteVistaEfectivo";
-							//var cuentacomponenteVista = context.CuentacomponenteVista.FirstOrDefault(a => a.Secuencialcuenta == secCuenta && a.Secuencialcomponentevista == 1);
-							var cuentacomponenteVista = context.CuentacomponenteVista.Where(a => a.Secuencialcuenta == model.SecuencialCuenta).ToList();
-							var cuentacomponenteVistaSaldoEfectivo = cuentacomponenteVista.FirstOrDefault(a => a.Secuencialcomponentevista == 1);
-							if (cuentacomponenteVistaSaldoEfectivo != null)
+
+							//var cuentacomponenteVista = context.CuentacomponenteVista.Where(a => a.Secuencialcuenta == model.SecuencialCuenta).ToList();
+							//var cuentacomponenteVistaSaldoEfectivo = cuentacomponenteVista.FirstOrDefault(a => a.Secuencialcomponentevista == 1);
+
+							var cuentacomponenteVista = (from ccv in context.CuentacomponenteVista join
+														   cvd in context.ComponenteVistaDisponible on ccv.Secuencialcomponentevista equals cvd.SECUENCIALCOMPONENTEVISTA
+														 where ccv.Secuencialcuenta == model.SecuencialCuenta
+														 select ccv).FirstOrDefault();
+
+							
+							if (cuentacomponenteVista != null)
 							{
 
-								cuentacomponenteVistaSaldoEfectivo.Saldo += monttoTransaccionEfectivo;
-								cuentacomponenteVistaSaldoEfectivo.Numeroverificador += 1;
+								cuentacomponenteVista.Saldo += monttoTransaccionEfectivo;
+								cuentacomponenteVista.Numeroverificador += 1;
 
-								context.Attach(cuentacomponenteVistaSaldoEfectivo);
+								context.Attach(cuentacomponenteVista);
 								context.SaveChanges();
 							}
 
-							saldoTotalCuentas += cuentacomponenteVistaSaldoEfectivo.Saldo;
+							saldoTotalCuentas += cuentacomponenteVista.Saldo; // cuentacomponenteVistaSaldoEfectivo.Saldo;
 
 							//CON 15
 							tableName = "CON15 movimientocuentacompVistaEfectivo";
-							var saldoTotalCuenta = cuentacomponenteVista.Sum(a => a.Saldo) + monttoTransaccionEfectivo;
+							var saldoTotalCuenta = cuentacomponenteVista.Saldo + monttoTransaccionEfectivo;  //cuentacomponenteVista.Sum(a => a.Saldo) + monttoTransaccionEfectivo;
 							MovimientocuentacompVista movimientocuentacompVista = new MovimientocuentacompVista
 							{
 								Secuencialmovimientodetalle = movimientodetalle.Secuencial,
@@ -180,7 +187,7 @@ namespace api.core.trans.Services
 								Secuencialcomponentevista = 1,
 								Codigotipomovimiento = "Efectivo",
 								Valor = monttoTransaccionEfectivo,
-								Saldo = cuentacomponenteVistaSaldoEfectivo.Saldo, //montoTransaccion,
+								Saldo  = cuentacomponenteVista.Saldo, // cuentacomponenteVistaSaldoEfectivo.Saldo, //montoTransaccion,
 								Saldocuenta = saldoTotalCuenta // cuentacomponenteVista.Saldo
 							};
 							context.MovimientocuentacompVista.Add(movimientocuentacompVista);
@@ -302,9 +309,9 @@ namespace api.core.trans.Services
 							int secuencialVentanillaComponenteCaja = 0;
 							if (existeVentanillaefectivo)
 							{
-								var existeVentanilla = context.VentanillacomponenteCaja.FirstOrDefault(a => a.Secuencialventanilla == secuencialVentanillaEfectivo);
+								var existeVentanilla = context.VentanillacomponenteCaja.FirstOrDefault(a => a.Secuencialventanilla == secuencialVentanillaEfectivo && a.Secuencialcomponentecaja == 26);
 
-								if(existeVentanilla != null)
+								if (existeVentanilla != null)
 								{
 									existeVentanilla.Cantidad += model.Transacciones.DenominacionMoneda.Where(a => a.ValueInsert > 0).Sum(a => a.ValueInsert);
 									existeVentanilla.Saldo += monttoTransaccionEfectivo;
@@ -313,6 +320,22 @@ namespace api.core.trans.Services
 									context.SaveChanges();
 
 									secuencialVentanillaComponenteCaja = existeVentanilla.Secuencial;
+								}
+								else {
+									VentanillacomponenteCaja ventanillacomponente = new VentanillacomponenteCaja
+									{
+										Secuencialventanilla = secuencialVentanillaEfectivo,
+										Secuencialcomponentecaja = 26,
+										Secuencialmoneda = model.SecuencialMoneda,
+										Cantidad = model.Transacciones.DenominacionMoneda.Where(a => a.ValueInsert > 0).Sum(a => a.ValueInsert), //   
+										Saldo = monttoTransaccionEfectivo,
+										Valorcuadre = 0
+									};
+									context.VentanillacomponenteCaja.Add(ventanillacomponente);
+									context.SaveChanges();
+
+									secuencialVentanillaComponenteCaja = ventanillacomponente.Secuencial;
+
 								}
 							}
 							else
@@ -334,7 +357,7 @@ namespace api.core.trans.Services
 
 
 							//27 VALIDAR ESTA CONSULTA TIENE QUE VER CON LOS BILLETES Y TRANSACCIONES DEL MONTO
-							tableName = "CON27 MovimientoventanillacompCaja";
+							tableName = "CON27 MovimientoventanillacompCaja - efectivo"; 
 							MovimientoventanillacompCaja movimientoventanillacompCaja = new MovimientoventanillacompCaja
 							{
 								Secuencialmovimientodetalle = movimientodetalle2.Secuencial, //Revisar se hace insercion en dos movimientos detalle revisar cual
@@ -425,9 +448,14 @@ namespace api.core.trans.Services
 						}
 						else
 						{
-							var cuentacomponenteVista = context.CuentacomponenteVista.Where(a => a.Secuencialcuenta == model.SecuencialCuenta).ToList();
-							var cuentacomponenteVistaSaldoEfectivo = cuentacomponenteVista.FirstOrDefault(a => a.Secuencialcomponentevista == 1);
-							saldoTotalCuentas += cuentacomponenteVistaSaldoEfectivo.Saldo;
+							var cuentacomponenteVista = (from ccv in context.CuentacomponenteVista join
+		                                                 cvd in context.ComponenteVistaDisponible on ccv.Secuencialcomponentevista equals cvd.SECUENCIALCOMPONENTEVISTA
+														 where ccv.Secuencialcuenta == model.SecuencialCuenta
+														 select ccv).FirstOrDefault();
+
+							//var cuentacomponenteVista = context.CuentacomponenteVista.Where(a => a.Secuencialcuenta == model.SecuencialCuenta).ToList();
+							//var cuentacomponenteVistaSaldoEfectivo = cuentacomponenteVista.FirstOrDefault(a => a.Secuencialcomponentevista == 1);
+							saldoTotalCuentas += cuentacomponenteVista.Saldo; // cuentacomponenteVistaSaldoEfectivo.Saldo;
 						}
 
 						//VALIDA SI EL DEPOSITO FUE EN CHEQUE
@@ -435,24 +463,29 @@ namespace api.core.trans.Services
 						{
 							//CON 14
 							tableName = "CON14 CuentacomponenteVistaCheque";
-							//var cuentacomponenteVista = context.CuentacomponenteVista.FirstOrDefault(a => a.Secuencialcuenta == secCuenta && a.Secuencialcomponentevista == 1);
-							var cuentacomponenteVista = context.CuentacomponenteVista.Where(a => a.Secuencialcuenta == model.SecuencialCuenta).ToList();
-							var cuentacomponenteVistaSaldoCheque = cuentacomponenteVista.FirstOrDefault(a => a.Secuencialcomponentevista == 2);
-							if (cuentacomponenteVistaSaldoCheque != null)
+							//var cuentacomponenteVista = context.CuentacomponenteVista.Where(a => a.Secuencialcuenta == model.SecuencialCuenta).ToList();
+							//var cuentacomponenteVistaSaldoCheque = cuentacomponenteVista.FirstOrDefault(a => a.Secuencialcomponentevista == 2);
+
+							var cuentacomponenteVista = (from ccv in context.CuentacomponenteVista join
+		                                                 cvd in context.ComponenteVistaRetencion on ccv.Secuencialcomponentevista equals cvd.SECUENCIALCOMPONENTEVISTA
+														 where ccv.Secuencialcuenta == model.SecuencialCuenta
+														 select ccv).FirstOrDefault();
+
+							if (cuentacomponenteVista != null)
 							{
 
-								cuentacomponenteVistaSaldoCheque.Saldo += monttoTransaccionCheque;
-								cuentacomponenteVistaSaldoCheque.Numeroverificador += 1;
+								cuentacomponenteVista.Saldo += monttoTransaccionCheque;
+								cuentacomponenteVista.Numeroverificador += 1;
 
-								context.Attach(cuentacomponenteVistaSaldoCheque);
+								context.Attach(cuentacomponenteVista);
 								context.SaveChanges();
 							}
 
-							saldoTotalCuentas += cuentacomponenteVistaSaldoCheque.Saldo;
+							saldoTotalCuentas += cuentacomponenteVista.Saldo;
 
 							//CON 15
 							tableName = "CON15 movimientocuentacompVistaCheque";
-							var saldoTotalCuenta = cuentacomponenteVista.Sum(a => a.Saldo) + monttoTransaccionCheque;
+							var saldoTotalCuenta = cuentacomponenteVista.Saldo + monttoTransaccionCheque;  //cuentacomponenteVista.Sum(a => a.Saldo) + monttoTransaccionCheque;
 							MovimientocuentacompVista movimientocuentacompVista = new MovimientocuentacompVista
 							{
 								Secuencialmovimientodetalle = movimientodetalle.Secuencial,
@@ -460,7 +493,7 @@ namespace api.core.trans.Services
 								Secuencialcomponentevista = 2,
 								Codigotipomovimiento = "Cheque",
 								Valor = monttoTransaccionCheque,
-								Saldo = cuentacomponenteVistaSaldoCheque.Saldo, //montoTransaccion,
+								Saldo = cuentacomponenteVista.Saldo, //montoTransaccion,
 								Saldocuenta = saldoTotalCuenta // cuentacomponenteVista.Saldo
 							};
 							context.MovimientocuentacompVista.Add(movimientocuentacompVista);
@@ -475,7 +508,7 @@ namespace api.core.trans.Services
 								Valor = monttoTransaccionCheque,
 								Esdebito = false,
 								Documento = _empresaDocumento.Ultimonumerodocumentomov.ToString(),
-								Detalle = model.NombreTransaccion + " " + model.CodigoCuenta.ToString(),
+								Detalle = model.CodigoUsuario + " " + "ChequeIngreso", // model.NombreTransaccion + " " + model.CodigoCuenta.ToString(),
 								Estacontabilizado = false,
 								Secuencialcuentacontable = cuentaContable.SecuencialCuentaContable,
 								Secuencialoficina = model.SecOficina,
@@ -610,7 +643,7 @@ namespace api.core.trans.Services
 										Secuencialventanilla = secuencialVentanillaCheque, // ventanillaCheque.Secuencial,
 										Secuencialcomponentecaja = 27,
 										Secuencialmoneda = model.SecuencialMoneda,
-										Cantidad = 1,
+										Cantidad = model.Cheques.Count, // 1,
 										Saldo = monttoTransaccionCheque,
 										Valorcuadre = 0
 									};
@@ -627,7 +660,7 @@ namespace api.core.trans.Services
 									Secuencialventanilla = secuencialVentanillaCheque, // ventanillaCheque.Secuencial,
 									Secuencialcomponentecaja = 27,
 									Secuencialmoneda = model.SecuencialMoneda,
-									Cantidad = 1,
+									Cantidad = model.Cheques.Count, // 1,
 									Saldo = monttoTransaccionCheque,
 									Valorcuadre = 0
 								};
@@ -643,7 +676,7 @@ namespace api.core.trans.Services
 								Secuencialmovimientodetalle = movimientodetalleCheque2.Secuencial, 
 								Secuencialventanillacompcaja = secuencialVentanillaComponenteCajaCheque, // ventanillacomponente.Secuencial,
 								Codigotipomovimientocaja = "ChequeIngreso",
-								Cantidad = 1,
+								Cantidad = model.Cheques.Count(), //1,
 								Valor = monttoTransaccionCheque,
 								Saldo = monttoTransaccionCheque
 							};
@@ -652,13 +685,13 @@ namespace api.core.trans.Services
 
 							//28   
 							tableName = "CON28 RegistrocontableCheque";
-							var codigoCuentaContable = context.ComponenteCuentaContable.FirstOrDefault(a => a.Secuencialcomponente == 26);
+							var codigoCuentaContable = context.ComponenteCuentaContable.FirstOrDefault(a => a.Secuencialcomponente == 2);
 							Registrocontable registrocontable2 = new Registrocontable
 							{
 								Valor = monttoTransaccionCheque,
 								Esdebito = true,
 								Documento = _empresaDocumento.Ultimonumerodocumentomov.ToString(),
-								Detalle = model.CodigoUsuario + " " + "Efectivo",
+								Detalle = model.CodigoUsuario + " " + "ChequeIngreso",
 								Estacontabilizado = false,
 								Secuencialcuentacontable = codigoCuentaContable.SecuencialCuentaContable,
 								Secuencialoficina = model.SecOficina,
@@ -682,8 +715,8 @@ namespace api.core.trans.Services
 
 							foreach (var item in model.Cheques)
 							{
-
-								int diasEfectivizacion = context.Ruta.FirstOrDefault(a => a.Secuencialbancoemisor == item.SecuencialBancoEmisor).Diastransito;
+								tableName = "CON29 Cheque";
+								//int diasEfectivizacion = context.Ruta.FirstOrDefault(a => a.Secuencialbancoemisor == item.SecuencialBancoEmisor).Diastransito;
 								var cheque = new Cheque
 								{
 									CodigoCuentaCorriente = item.CodigoCuentaCorriente,
@@ -701,6 +734,7 @@ namespace api.core.trans.Services
 								context.Cheque.Add(cheque);
 								context.SaveChanges();
 
+								tableName = "CON30 ChequeMovimientoDetalle";
 								ChequeMovimientoDetalle chequeMovimientoDetalle = new ChequeMovimientoDetalle
 								{
 									SecuencialCheque = cheque.Secuencial,
@@ -719,28 +753,32 @@ namespace api.core.trans.Services
 								context.ChequeMovimientoDetalle.Add(chequeMovimientoDetalle2);
 								context.SaveChanges();
 
-								Chequeefectivizacion chequeEfectivizacion = new Chequeefectivizacion
-								{
-									SecuencialCheque = cheque.Secuencial,
-									FechaMaquina = DateTime.Now,
-									FechaSistema = fechaCajero.AddDays(diasEfectivizacion), //TODO AGREGA CAMPOS DIAS DE EFECTIVACION DE CHEQUE SEGUN BANCO SELECCIONADO
-									CodigoUsuario = model.CodigoUsuario,
-									SecuencialOficina = model.SecOficina,
-									Documento = _empresaDocumento.Ultimonumerodocumentomov.ToString(),
-									EsManual = false,
-									EstuvoenTransito = false
-								};
-
-								context.Chequeefectivizacion.Add(chequeEfectivizacion);
-								context.SaveChanges();
+								//Chequeefectivizacion chequeEfectivizacion = new Chequeefectivizacion
+								//{
+								//	SecuencialCheque = cheque.Secuencial,
+								//	FechaMaquina = DateTime.Now,
+								//	FechaSistema = DateTime.Now, // fechaCajero.AddDays(diasEfectivizacion), //TODO AGREGA CAMPOS DIAS DE EFECTIVACION DE CHEQUE SEGUN BANCO SELECCIONADO
+								//	CodigoUsuario = model.CodigoUsuario,
+								//	SecuencialOficina = model.SecOficina,
+								//	Documento = _empresaDocumento.Ultimonumerodocumentomov.ToString(),
+								//	EsManual = false,
+								//	EstuvoenTransito = false
+								//};
+								//context.Chequeefectivizacion.Add(chequeEfectivizacion);
+								//context.SaveChanges();
 							}
 						}
 						else
 						{
-							var cuentacomponenteVista = context.CuentacomponenteVista.Where(a => a.Secuencialcuenta == model.SecuencialCuenta).ToList();
-							var cuentacomponenteVistaSaldoCheque = cuentacomponenteVista.FirstOrDefault(a => a.Secuencialcomponentevista == 2);
+							var cuentacomponenteVista = (from ccv in context.CuentacomponenteVista join
+			                                             cvd in context.ComponenteVistaRetencion on ccv.Secuencialcomponentevista equals cvd.SECUENCIALCOMPONENTEVISTA
+														 where ccv.Secuencialcuenta == model.SecuencialCuenta
+														 select ccv).FirstOrDefault();
 
-							saldoTotalCuentas += cuentacomponenteVistaSaldoCheque.Saldo;
+							//var cuentacomponenteVista = context.CuentacomponenteVista.Where(a => a.Secuencialcuenta == model.SecuencialCuenta).ToList();
+							//var cuentacomponenteVistaSaldoCheque = cuentacomponenteVista.FirstOrDefault(a => a.Secuencialcomponentevista == 2);
+
+							saldoTotalCuentas += cuentacomponenteVista.Saldo; // cuentacomponenteVistaSaldoCheque.Saldo;
 						}
 
 						tableName = "Transaccionmobile";

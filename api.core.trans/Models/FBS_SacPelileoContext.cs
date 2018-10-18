@@ -61,7 +61,9 @@ namespace api.core.trans.Models
 		public virtual DbSet<Chequeefectivizacion> Chequeefectivizacion { get; set; }
 		public virtual DbSet<Ruta> Ruta { get; set; }
 		public virtual DbSet<Calendario> Calendario { get; set; }
-
+		public virtual DbSet<UsuarioHorarioIngreso> UsuarioHorarioIngreso { get; set; }
+		public virtual DbSet<ComponenteVistaDisponible> ComponenteVistaDisponible { get; set; }
+		public virtual DbSet<ComponenteVistaRetencion> ComponenteVistaRetencion { get; set; }
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 			if (!optionsBuilder.IsConfigured)
@@ -1658,6 +1660,36 @@ namespace api.core.trans.Models
 				entity.Property(e => e.EsFeriado).HasColumnName("ESFERIADO");
 				entity.Property(e => e.NumeroVerificador).HasColumnName("NUMEROVERIFICADOR");
 				entity.Property(e => e.EsHabil).HasColumnName("ESHABIL");
+			});
+
+			modelBuilder.Entity<UsuarioHorarioIngreso>(entity =>
+			{
+				entity.HasKey(e => e.Secuencial);
+				entity.ToTable("USUARIOHORARIOINGRESO", "FBS_SEGURIDADES");
+
+				entity.Property(e => e.CodigoUsuario).HasColumnName("CODIGOUSUARIO");
+				entity.Property(e => e.Dia).HasColumnName("DIA");
+				entity.Property(e => e.HoraInicio).HasColumnName("HORAINICIO");
+				entity.Property(e => e.MinutoInicio).HasColumnName("MINUTOINICIO");
+				entity.Property(e => e.HorasValidez).HasColumnName("HORASVALIDEZ");
+				entity.Property(e => e.MinutosValidez).HasColumnName("MINUTOSVALIDEZ");
+				entity.Property(e => e.EstaActivo).HasColumnName("ESTAACTIVO");
+				entity.Property(e => e.NumeroVerificador).HasColumnName("NUMEROVERIFICADOR");
+			});
+
+			
+			modelBuilder.Entity<ComponenteVistaDisponible>(entity =>
+			{
+				entity.HasKey(e => e.SECUENCIALCOMPONENTEVISTA);
+				entity.ToTable("COMPONENTE_VISTA_DISPONIBLE", "FBS_CAPTACIONESVISTA");
+
+			});
+
+			modelBuilder.Entity<ComponenteVistaRetencion>(entity =>
+			{
+				entity.HasKey(e => e.SECUENCIALCOMPONENTEVISTA);
+				entity.ToTable("COMPONENTE_VISTA_RETENCION", "FBS_CAPTACIONESVISTA");
+
 			});
 		}
 	}

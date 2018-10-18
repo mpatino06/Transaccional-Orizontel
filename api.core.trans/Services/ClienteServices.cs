@@ -48,11 +48,11 @@ namespace api.core.trans.Services
 		/// 
 		/// </summary>
 		/// <param name="codigo"></param>
-		/// <param name="seleccion"></param> 0.Busqueda por Numero de Cliente 1. Busqueda por Identificacion 
+		/// <param name="seleccion"></param> 0.Busqueda por Numero de Cliente 1. Busqueda por Identificacion 2. Por Nombre 
 		/// <returns></returns>
-		public ClienteExtend GetClienteBycode(int codigo, int seleccion)
+		public List<ClienteExtend> GetClienteBycode(string codigo, int seleccion)
 		{
-			ClienteExtend clienteExtend = new ClienteExtend();
+			List<ClienteExtend> clienteExtend = new List<ClienteExtend>();
 			try
 			{
 				string qry = "";
@@ -86,7 +86,15 @@ namespace api.core.trans.Services
 				qry += "FBS_ORGANIZACIONES.OFICINA AS O ON C.SECUENCIALOFICINA = O.SECUENCIALDIVISION INNER JOIN ";
 				qry += "FBS_PERSONAS.PERSONA AS P ON C.SECUENCIALPERSONA = p.SECUENCIAL INNER JOIN ";
 				qry += "FBS_PERSONAS.TIPOIDENTIFICACION AS TI ON P.SECUENCIALTIPOIDENTIFICACION = TI.SECUENCIAL ";
-				qry += (seleccion == 0) ? "WHERE (C.NUMEROCLIENTE ='" + codigo + "')" : "WHERE (P.IDENTIFICACION ='" + codigo + "')";
+				if (seleccion < 2)
+				{
+					qry += (seleccion == 0) ? "WHERE (C.NUMEROCLIENTE ='" + codigo + "')" : "WHERE (P.IDENTIFICACION ='" + codigo + "')";
+				}
+				else {
+					qry += "WHERE P.NOMBREUNIDO LIKE '%" + codigo + "%' ";
+					qry += "ORDER BY P.NOMBREUNIDO"; 
+				}
+				
 
 
 				using (SqlConnection conn = new SqlConnection(SQLHelper.ConnectionString))
@@ -94,34 +102,40 @@ namespace api.core.trans.Services
 					SqlDataReader dr = SQLHelper.ExecuteReader(conn, System.Data.CommandType.Text, qry, null);
 					if (dr.HasRows)
 					{
-						while (dr.Read())
+						//while (dr.Read())
+						//{
+						foreach (DbDataRecord c in dr.Cast<DbDataRecord>())
 						{
-							clienteExtend.SecuencialCliente = dr.GetInt32(0);
-							clienteExtend.SecuencialOficina = dr.GetInt32(1);
-							clienteExtend.SecuencialEmpresa = dr.GetInt32(2);
-							clienteExtend.SecuencialPersona = dr.GetInt32(3);
-							clienteExtend.NumeroCliente = dr.GetInt32(4);
-							clienteExtend.FechaIngreso = dr.GetDateTime(5);
-							clienteExtend.CodigoUsuarioOficial = dr.GetString(6);
-							clienteExtend.CodigoSectorEconomico = dr.GetString(7);
-							clienteExtend.CodigoTipoVinculacion = dr.GetString(8);
-							clienteExtend.CodigoCalificacionInterna = dr.GetString(9);
-							clienteExtend.SecuencialDivisionMercado = dr.GetInt32(10);
-							clienteExtend.CodigoEstadoCliente = dr.GetString(11);
-							clienteExtend.NumeroVerificadorCliente = dr.GetInt32(12);
-							clienteExtend.CodigoTipoIDentificacion = dr.GetString(13);
-							clienteExtend.NombreTipoIdentificacion = dr.GetString(14);
-							clienteExtend.Identificacion = dr.GetString(15);
-							clienteExtend.NombreUnido = dr.GetString(16);
-							clienteExtend.DireccionDomicilio = dr.GetString(17);
-							clienteExtend.ReferenciaDomiciliaria = dr.GetString(18);
-							clienteExtend.Email = dr.GetString(19);
-							clienteExtend.SecuencialTipoIdentificacion = dr.GetInt32(20);
-							clienteExtend.SecuencialDivPolResidencia = dr.GetInt32(21);
-							clienteExtend.CodigoPaisOrigen = dr.GetString(22);
-							clienteExtend.NumeroVerificador = dr.GetInt32(23);
-							clienteExtend.SecuencialDivActEcon = dr.GetInt32(24);
+							clienteExtend.Add(new ClienteExtend
+							{
+								SecuencialCliente = dr.GetInt32(0),
+								SecuencialOficina = dr.GetInt32(1),
+								SecuencialEmpresa = dr.GetInt32(2),
+								SecuencialPersona = dr.GetInt32(3),
+								NumeroCliente = dr.GetInt32(4),
+								FechaIngreso = dr.GetDateTime(5),
+								CodigoUsuarioOficial = dr.GetString(6),
+								CodigoSectorEconomico = dr.GetString(7),
+								CodigoTipoVinculacion = dr.GetString(8),
+								CodigoCalificacionInterna = dr.GetString(9),
+								SecuencialDivisionMercado = dr.GetInt32(10),
+								CodigoEstadoCliente = dr.GetString(11),
+								NumeroVerificadorCliente = dr.GetInt32(12),
+								CodigoTipoIDentificacion = dr.GetString(13),
+								NombreTipoIdentificacion = dr.GetString(14),
+								Identificacion = dr.GetString(15),
+								NombreUnido = dr.GetString(16),
+								DireccionDomicilio = dr.GetString(17),
+								ReferenciaDomiciliaria = dr.GetString(18),
+								Email = dr.GetString(19),
+								SecuencialTipoIdentificacion = dr.GetInt32(20),
+								SecuencialDivPolResidencia = dr.GetInt32(21),
+								CodigoPaisOrigen = dr.GetString(22),
+								NumeroVerificador = dr.GetInt32(23),
+								SecuencialDivActEcon = dr.GetInt32(24)
+							});
 						}
+						//}
 					}
 				}
 			}

@@ -31,3 +31,9 @@
 2018-10-16 00:31:52,092 ERROR - SaveTransaccion CON21 ventanilla - Efecivo Error: An error occurred while updating the entries. See the inner exception for details.
 2018-10-16 00:33:33,974 ERROR - SaveTransaccion CON21 ventanilla - Efecivo Error: An error occurred while updating the entries. See the inner exception for details.
 2018-10-16 03:02:41,176 ERROR - SaveTransaccion CON26 ventanillacomponente - Efectivo Error: An error occurred while updating the entries. See the inner exception for details.
+2018-10-17 20:28:09,499 ERROR - SaveTransaccion CON27 MovimientoventanillacompCaja - efectivo Error: An error occurred while updating the entries. See the inner exception for details.
+2018-10-17 20:29:42,958 ERROR - SaveTransaccion CON27 MovimientoventanillacompCaja - efectivo Error: An error occurred while updating the entries. See the inner exception for details.
+2018-10-17 20:43:46,884 ERROR - SaveTransaccion CON28 RegistrocontableCheque Error: An error occurred while updating the entries. See the inner exception for details.
+2018-10-17 20:55:28,541 ERROR - SaveTransaccion CON29 Cheque Error: An error occurred while updating the entries. See the inner exception for details.
+2018-10-17 20:56:21,344 ERROR - SaveTransaccion CON29 Cheque Error: An error occurred while updating the entries. See the inner exception for details.
+2018-10-17 23:10:57,263 ERROR - SaveTransaccion CON28 Registrocontable Error: Object reference not set to an instance of an object.

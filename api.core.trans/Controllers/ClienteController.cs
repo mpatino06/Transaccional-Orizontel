@@ -32,7 +32,7 @@ namespace api.core.trans.Controllers
 		}
 
 		[HttpGet("GetClienteBycode/{codigo}/{seleccion}")]
-		public async Task<IActionResult> GetBySecEmpresaYNumeroCliente([FromRoute] int codigo, int seleccion)
+		public async Task<IActionResult> GetBySecEmpresaYNumeroCliente([FromRoute] string codigo, int seleccion)
 		{
 			var result = await Task.Run(() => context.GetClienteBycode(codigo, seleccion));
 			if (result == null)

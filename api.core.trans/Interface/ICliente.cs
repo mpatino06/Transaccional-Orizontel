@@ -10,7 +10,7 @@ namespace api.core.trans.Interface
 	public interface ICliente
 	{
 		Cliente GetCliente(int code, int seleccion);
-		ClienteExtend GetClienteBycode(int codigo, int seleccion);
+		List<ClienteExtend> GetClienteBycode(string codigo, int seleccion);
 		List<Comentariocliente> GetComentarioCliente(int cliente, bool activo);
 		List<ClienteCuentas> GetCuentasCliente(int cliente, int transaccion);
 		CuentacomponenteVista GetSaldoCuenta(int cuenta, int componente);

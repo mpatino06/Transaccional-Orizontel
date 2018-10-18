@@ -9,7 +9,7 @@ namespace api.core.trans.ExtendModels
 	public class UsuarioExtend
 	{
 		public Usuario usuario { get; set; }
-
 		public UsuarioComplemento usuarioComplemento {get; set;}
+		public bool AccesoUsuario { get; set; }
 	}
 }
