@@ -179,7 +179,9 @@ namespace api.core.trans.Services
 
 							//CON 15
 							tableName = "CON15 movimientocuentacompVistaEfectivo";
-							var saldoTotalCuenta = cuentacomponenteVista.Saldo + monttoTransaccionEfectivo;  //cuentacomponenteVista.Sum(a => a.Saldo) + monttoTransaccionEfectivo;
+							//var saldoTotalCuenta = cuentacomponenteVista.Saldo; // + monttoTransaccionEfectivo; 
+							var saldoTotalCuenta = context.MovimientocuentacompVista.LastOrDefault(a => a.Secuencialcuenta == model.SecuencialCuenta).Saldo + monttoTransaccionEfectivo;
+
 							MovimientocuentacompVista movimientocuentacompVista = new MovimientocuentacompVista
 							{
 								Secuencialmovimientodetalle = movimientodetalle.Secuencial,
@@ -187,7 +189,7 @@ namespace api.core.trans.Services
 								Secuencialcomponentevista = 1,
 								Codigotipomovimiento = "Efectivo",
 								Valor = monttoTransaccionEfectivo,
-								Saldo  = cuentacomponenteVista.Saldo, // cuentacomponenteVistaSaldoEfectivo.Saldo, //montoTransaccion,
+								Saldo  = saldoTotalCuenta, // cuentacomponenteVista.Saldo, // cuentacomponenteVistaSaldoEfectivo.Saldo, //montoTransaccion,
 								Saldocuenta = saldoTotalCuenta // cuentacomponenteVista.Saldo
 							};
 							context.MovimientocuentacompVista.Add(movimientocuentacompVista);
@@ -399,7 +401,7 @@ namespace api.core.trans.Services
 
 
 
-							foreach (var item in model.Transacciones.DenominacionMoneda.Where(a=> a.ValueInsert > 0))
+							foreach (var item in model.Transacciones.DenominacionMoneda.Where(a=> a.ValueInsert != 0))
 							{
 								int secEfectivoDenominacion = 0;
 								var ventanillaDenominacion = context.Ventanillacomponentedenomnefe.FirstOrDefault(a => a.Secuencialventanillacompcaja == secuencialVentanillaComponenteCaja && a.Denominacion == item.Denominacion);
@@ -485,7 +487,8 @@ namespace api.core.trans.Services
 
 							//CON 15
 							tableName = "CON15 movimientocuentacompVistaCheque";
-							var saldoTotalCuenta = cuentacomponenteVista.Saldo + monttoTransaccionCheque;  //cuentacomponenteVista.Sum(a => a.Saldo) + monttoTransaccionCheque;
+							//var saldoTotalCuenta = context.CuentacomponenteVista.LastOrDefault(a => a.Secuencialcuenta == model.SecuencialCuenta).Saldo + monttoTransaccionCheque;
+							//var saldoTotalCuenta = cuentacomponenteVista.Saldo; // + monttoTransaccionCheque;  //cuentacomponenteVista.Sum(a => a.Saldo) + monttoTransaccionCheque;
 							MovimientocuentacompVista movimientocuentacompVista = new MovimientocuentacompVista
 							{
 								Secuencialmovimientodetalle = movimientodetalle.Secuencial,
@@ -493,8 +496,8 @@ namespace api.core.trans.Services
 								Secuencialcomponentevista = 2,
 								Codigotipomovimiento = "Cheque",
 								Valor = monttoTransaccionCheque,
-								Saldo = cuentacomponenteVista.Saldo, //montoTransaccion,
-								Saldocuenta = saldoTotalCuenta // cuentacomponenteVista.Saldo
+								Saldo = saldoTotalCuentas, // cuentacomponenteVista.Saldo, //montoTransaccion,
+								Saldocuenta = saldoTotalCuentas // cuentacomponenteVista.Saldo
 							};
 							context.MovimientocuentacompVista.Add(movimientocuentacompVista);
 							context.SaveChanges();
@@ -534,7 +537,7 @@ namespace api.core.trans.Services
 								Fecha = DateTime.Now,
 								Depositos = monttoTransaccionCheque.ToString(),
 								Retiros = "0",
-								Saldo = saldoTotalCuenta.ToString(), // cuentacomponenteVista.Saldo.ToString(),
+								Saldo = saldoTotalCuentas.ToString(), // cuentacomponenteVista.Saldo.ToString(),
 								Transaccion = model.SiglasTransaccion,
 								Secuencialcliente = model.secCliente,
 								Secuencialcuenta = model.SecuencialCuenta,
@@ -543,7 +546,7 @@ namespace api.core.trans.Services
 								Numeoverificador = 0,
 								Efectivo = "0,00",
 								Cheque = monttoTransaccionCheque.ToString(),
-								Saldodisponible = saldoTotalCuenta.ToString(),  //cuentacomponenteVista.Saldo.ToString(),
+								Saldodisponible = saldoTotalCuentas.ToString(),  //cuentacomponenteVista.Saldo.ToString(),
 								Saldoobligatorios = "0",
 								Valortransaccion = monttoTransaccionCheque.ToString(),
 								Eslinearendfinanc = false,
@@ -562,7 +565,7 @@ namespace api.core.trans.Services
 								{
 									Secuencialmovimientodetalle = movimientodetalle.Secuencial,
 									Secuencialcuenta = model.SecuencialCuenta,
-									Saldocuenta = saldoTotalCuenta, // cuentacomponenteVista.Saldo,
+									Saldocuenta = saldoTotalCuentas, //saldoTotalCuenta, // cuentacomponenteVista.Saldo,
 									Codigoestadocuenta = "A"
 								};
 								context.MovimientodetalleCuenta.Add(movimientodetalleCuentaCheque);
@@ -570,7 +573,7 @@ namespace api.core.trans.Services
 							}
 							else
 							{
-								existMovimientoDetalleCuenta.Saldocuenta = saldoTotalCuenta;
+								existMovimientoDetalleCuenta.Saldocuenta = saldoTotalCuentas; // saldoTotalCuenta;
 								context.Attach(existMovimientoDetalleCuenta);
 								context.SaveChanges();
 							}

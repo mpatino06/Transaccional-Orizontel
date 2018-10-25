@@ -37,3 +37,4 @@
 2018-10-17 20:55:28,541 ERROR - SaveTransaccion CON29 Cheque Error: An error occurred while updating the entries. See the inner exception for details.
 2018-10-17 20:56:21,344 ERROR - SaveTransaccion CON29 Cheque Error: An error occurred while updating the entries. See the inner exception for details.
 2018-10-17 23:10:57,263 ERROR - SaveTransaccion CON28 Registrocontable Error: Object reference not set to an instance of an object.
+2018-10-22 23:18:43,649 ERROR - SaveTransaccion CON14 CuentacomponenteVistaEfectivo Error: Input string was not in a correct format.
