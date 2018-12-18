@@ -10,6 +10,7 @@ namespace api.core.trans.ExtendModels
 	{
 		public Usuario usuario { get; set; }
 		public UsuarioComplemento usuarioComplemento {get; set;}
+		public string CodigoError { get; set; }
 		public bool AccesoUsuario { get; set; }
 	}
 }

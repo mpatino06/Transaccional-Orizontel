@@ -89,8 +89,8 @@ namespace api.core.trans.Controllers
 		public async Task<IActionResult> SaveTransaccion([FromBody] RegistrarTransaccion transaccion)
 		{
 			var result = await Task.Run(() => context.SaveTransaccion(transaccion));
-			if (!result.Result)
-				return NotFound("Transaccion No Save");
+			//if (!result.Result)
+			//	return NotFound("Transaccion No Save");
 
 			return Ok(result);
 		}

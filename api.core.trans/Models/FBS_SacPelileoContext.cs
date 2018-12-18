@@ -64,6 +64,13 @@ namespace api.core.trans.Models
 		public virtual DbSet<UsuarioHorarioIngreso> UsuarioHorarioIngreso { get; set; }
 		public virtual DbSet<ComponenteVistaDisponible> ComponenteVistaDisponible { get; set; }
 		public virtual DbSet<ComponenteVistaRetencion> ComponenteVistaRetencion { get; set; }
+		public virtual DbSet<Componente> Componente { get; set; }
+		public virtual DbSet<Cuentacontable> Cuentacontable { get; set; }
+		public virtual DbSet<Movimientocontrol> Movimientocontrol { get; set; }
+		public virtual DbSet<MovimientocontrolTransfInt> MovimientocontrolTransfInt { get; set; }
+		public virtual DbSet<Usuariorol> Usuariorol { get; set; }
+
+
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 			if (!optionsBuilder.IsConfigured)
@@ -1690,6 +1697,75 @@ namespace api.core.trans.Models
 				entity.HasKey(e => e.SECUENCIALCOMPONENTEVISTA);
 				entity.ToTable("COMPONENTE_VISTA_RETENCION", "FBS_CAPTACIONESVISTA");
 
+			});
+
+			modelBuilder.Entity<Componente>(entity =>
+			{
+				entity.HasKey(e => e.Secuencial);
+				entity.ToTable("COMPONENTE", "FBS_NEGOCIOSFINANCIEROS");
+
+				entity.Property(e => e.Nombre).HasColumnName("NOMBRE");
+				entity.Property(e => e.Siglas).HasColumnName("SIGLAS");
+				entity.Property(e => e.SecuencialEmpresa).HasColumnName("SECUENCIALEMPRESA");
+				entity.Property(e => e.EsOperativo).HasColumnName("ESOPERATIVO");
+				entity.Property(e => e.MovimientoenBloque).HasColumnName("MOVIMIENTOENBLOQUE");
+				entity.Property(e => e.CodigoTipoProducto).HasColumnName("CODIGOTIPOPRODUCTO");
+				entity.Property(e => e.RequiereCuentaContable).HasColumnName("REQUIERECUENTACONTABLE");
+				entity.Property(e => e.EstaActivo).HasColumnName("ESTAACTIVO");
+				entity.Property(e => e.NumeroVerificador).HasColumnName("NUMEROVERIFICADOR");
+			});
+
+			modelBuilder.Entity<Cuentacontable>(entity =>
+			{
+				entity.HasKey(e => e.SecuecialDivision);
+				entity.ToTable("CUENTACONTABLE", "FBS_CONTABILIDADES");
+
+				entity.Property(e => e.EsDeudora).HasColumnName("ESDEUDORA");
+				entity.Property(e => e.SecuencialEmpresa).HasColumnName("SECUENCIALEMPRESA");
+				entity.Property(e => e.AfectaManualmente).HasColumnName("AFECTAMANUALMENTE");
+				entity.Property(e => e.RequiereAuxiliar).HasColumnName("REQUIEREAUXILIAR");
+				entity.Property(e => e.EsdeTotal).HasColumnName("ESDETOTAL");
+				entity.Property(e => e.EstaActiva).HasColumnName("ESTAACTIVA");
+				entity.Property(e => e.NumeroVerificador).HasColumnName("NUMEROVERIFICADOR");
+				entity.Property(e => e.FechaCreacion).HasColumnName("fechaCreacion");
+			});
+
+			modelBuilder.Entity<Movimientocontrol>(entity =>
+			{
+				entity.HasKey(e => e.Secuencial);
+				entity.ToTable("MOVIMIENTOCONTROL", "FBS_NEGOCIOSFINANCIEROS");
+
+				entity.Property(e => e.EsDebito).HasColumnName("ESDEBITO");
+				entity.Property(e => e.Valor).HasColumnName("VALOR");
+				entity.Property(e => e.SecuencialOficina).HasColumnName("SECUENCIALOFICINA");
+				entity.Property(e => e.SecuencialMoneda).HasColumnName("SECUENCIALMONEDA");
+				entity.Property(e => e.Documento).HasColumnName("DOCUMENTO");
+				entity.Property(e => e.Fecha).HasColumnName("FECHA");
+				entity.Property(e => e.FechaMaquina).HasColumnName("FECHAMAQUINA");
+				entity.Property(e => e.CodigoUsuario).HasColumnName("CODIGOUSUARIO");
+				entity.Property(e => e.NumeroVerificador).HasColumnName("NUMEROVERIFICADOR");
+			});
+
+			//
+			modelBuilder.Entity<MovimientocontrolTransfInt>(entity =>
+			{
+				entity.HasKey(e => e.SecuencialMovimientoControl);
+				entity.ToTable("MOVIMIENTOCONTROL_TRANSFINT", "FBS_CONTABILIDADES");
+
+				entity.Property(e => e.SecuencialCuentaContable).HasColumnName("SECUENCIALCUENTACONTABLE");
+			});
+
+			//Usuariorol
+
+			modelBuilder.Entity<Usuariorol>(entity =>
+			{
+				entity.HasKey(e => e.Secuencial);
+				entity.ToTable("USUARIOROL", "FBS_SEGURIDADES");
+
+				entity.Property(e => e.CodigoUsuario).HasColumnName("CODIGOUSUARIO");
+				entity.Property(e => e.CodigoRol).HasColumnName("CODIGOROL");
+				entity.Property(e => e.EstaActivo).HasColumnName("ESTAACTIVO");
+				entity.Property(e => e.NumeroVerificador).HasColumnName("NUMEROVERIFICADOR");
 			});
 		}
 	}

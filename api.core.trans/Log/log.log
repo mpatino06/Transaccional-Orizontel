@@ -38,3 +38,36 @@
 2018-10-17 20:56:21,344 ERROR - SaveTransaccion CON29 Cheque Error: An error occurred while updating the entries. See the inner exception for details.
 2018-10-17 23:10:57,263 ERROR - SaveTransaccion CON28 Registrocontable Error: Object reference not set to an instance of an object.
 2018-10-22 23:18:43,649 ERROR - SaveTransaccion CON14 CuentacomponenteVistaEfectivo Error: Input string was not in a correct format.
+2018-11-17 23:35:28,816 ERROR - ultimo saldo 2729,53
+2018-11-17 23:35:28,891 ERROR - saldo mas monto transaccion 4729,53
+2018-11-21 08:36:37,011 ERROR - ultimo saldo 4729,53
+2018-11-21 08:36:37,079 ERROR - saldo mas monto transaccion 6739,53
+2018-11-21 20:59:17,921 ERROR - ultimo saldo 6739,53
+2018-11-21 20:59:18,008 ERROR - saldo mas monto transaccion 6839,53
+2018-11-26 12:44:54,353 ERROR - ultimo saldo 110,00
+2018-11-26 12:44:54,409 ERROR - saldo mas monto transaccion 1110,00
+2018-11-26 12:50:33,922 ERROR - SaveTransaccion CON28 Registrocontable Error: Object reference not set to an instance of an object.
+2018-11-26 12:50:58,494 ERROR - ultimo saldo 110,00
+2018-11-26 12:50:58,518 ERROR - saldo mas monto transaccion 1110,00
+2018-11-26 12:53:20,596 ERROR - SaveTransaccion CON28 Registrocontable Error: Object reference not set to an instance of an object.
+2018-11-26 12:54:59,380 ERROR - ultimo saldo 110,00
+2018-11-26 12:54:59,412 ERROR - saldo mas monto transaccion 1110,00
+2018-11-26 13:00:24,407 ERROR - ultimo saldo 110,00
+2018-11-26 13:00:24,454 ERROR - saldo mas monto transaccion 1110,00
+2018-11-26 21:46:28,750 ERROR - ultimo saldo 1110,00
+2018-11-26 21:46:28,805 ERROR - saldo mas monto transaccion 2110,00
+2018-11-26 21:52:52,896 ERROR - ultimo saldo 2110,00
+2018-11-26 21:52:52,906 ERROR - saldo mas monto transaccion 2190,00
+2018-11-26 21:56:49,880 ERROR - ultimo saldo 2110,00
+2018-11-26 21:56:49,927 ERROR - saldo mas monto transaccion 2170,00
+2018-12-07 17:14:53,406 ERROR - SaveTransaccion CON 10 Movimiento Error: An error occurred while updating the entries. See the inner exception for details.
+2018-12-07 17:15:42,029 ERROR - SaveTransaccion CON 10 Movimiento Error: An error occurred while updating the entries. See the inner exception for details.
+2018-12-07 17:22:38,352 ERROR - SaveTransaccion CON 10 Movimiento Error: An error occurred while updating the entries. See the inner exception for details.
+2018-12-07 17:28:23,580 ERROR - SaveTransaccion CON 10 Movimiento Error: An error occurred while updating the entries. See the inner exception for details.
+2018-12-07 17:35:01,111 ERROR - SaveTransaccion CON 10 Movimiento Error: An error occurred while updating the entries. See the inner exception for details.
+2018-12-07 17:35:58,743 ERROR - ultimo saldo 6839,53
+2018-12-07 17:35:58,764 ERROR - saldo mas monto transaccion 6949,53
+2018-12-07 17:42:31,704 ERROR - ultimo saldo 6839,53
+2018-12-07 17:42:31,801 ERROR - saldo mas monto transaccion 6949,53
+2018-12-13 08:51:44,564 ERROR - ultimo saldo 6949,53
+2018-12-13 08:51:44,830 ERROR - saldo mas monto transaccion 7059,53

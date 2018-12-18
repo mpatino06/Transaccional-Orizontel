@@ -15,11 +15,12 @@ namespace api.core.trans.ExtendModels
 		public int secCliente { get; set; }
 		public int numCliente { get; set; }
 		public int SecEmpresa { get; set; }
-		public int SecOficina { get; set; }
+		public int SecOficinaUsuario { get; set; }
 		//CUENTA SELECCIONADA
 		public int SecuencialCuenta { get; set; }
 		public string CodigoCuenta { get; set; }
 		public int SecuencialMoneda { get; set; }
+		public int SecuencialOficinaCuenta { get; set; }
 		//MONTO TRANSACCION
 		public TransaccionMoneda Transacciones { get; set; } //Efectivo - Cheque
 		//CHEQUES

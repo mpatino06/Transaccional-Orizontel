@@ -10,5 +10,6 @@ namespace api.core.trans.ExtendModels
 		public bool Result { get; set; }
 		public string SecuencialDocumento { get; set; }
 		public Decimal Saldodeposito { get; set; }
+		public string MessageResult { get; set; }
 	}
 }

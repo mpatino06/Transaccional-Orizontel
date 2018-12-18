@@ -35,7 +35,7 @@ namespace api.core.trans.Services
 				string resultsha1 = security.HashSHA1Decryption(userpass);
 
 				string qry = "";
-				qry = "SELECT U.CODIGO, U.NOMBRE ";
+				qry = "SELECT U.CODIGO, U.NOMBRE, U.SECUENCIALOFICINA ";
 				qry += "FROM FBS_SEGURIDADES.USUARIO U JOIN FBS_SEGURIDADES.USUARIO_COMPLEMENTO UC on u.CODIGO = uc.CODIGOUSUARIO ";
 				qry += "where u.CODIGO = '" + login.User + "' AND UC.CLAVE = '" + resultsha1 + "'";
 				bool horaPermitida = false;
@@ -49,7 +49,7 @@ namespace api.core.trans.Services
 
 							UsuarioComplemento uc = new UsuarioComplemento
 							{
-								Codigousuario = dr.GetString(0),
+								Codigousuario = dr.GetString(0) + "." + dr.GetInt32(2).ToString(),
 								Clave = dr.GetString(1)
 							};
 							usuarioExtend.usuarioComplemento = uc;
@@ -78,5 +78,6 @@ namespace api.core.trans.Services
 			}
 			return usuarioExtend;
 		}
+
 	}
 }
